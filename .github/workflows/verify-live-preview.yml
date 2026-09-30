@@ -1,0 +1,37 @@
+name: Verify KFB private preview live
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-live-preview.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify unauthenticated preview is locked and noindex
+        shell: bash
+        run: |
+          set -euo pipefail
+          origin="https://kfb-preview.hungrypriest1224.workers.dev"
+
+          robots_code="$(curl -sS -o "$RUNNER_TEMP/robots.txt" -D "$RUNNER_TEMP/robots.headers" -w '%{http_code}' "$origin/robots.txt")"
+          test "$robots_code" = "200"
+          grep -Fq "Disallow: /" "$RUNNER_TEMP/robots.txt"
+          grep -Fiq "x-robots-tag: noindex, nofollow, noarchive" "$RUNNER_TEMP/robots.headers"
+
+          private_code="$(curl -sS -o "$RUNNER_TEMP/private.txt" -D "$RUNNER_TEMP/private.headers" -w '%{http_code}' "$origin/ja/")"
+          test "$private_code" = "401"
+          grep -Fiq 'www-authenticate: Basic realm="KFB Private Preview"' "$RUNNER_TEMP/private.headers"
+          grep -Fiq "x-robots-tag: noindex, nofollow, noarchive" "$RUNNER_TEMP/private.headers"
+
+          root_code="$(curl -sS -o "$RUNNER_TEMP/root.txt" -D "$RUNNER_TEMP/root.headers" -w '%{http_code}' "$origin/")"
+          test "$root_code" = "401"
+
+          echo "KFB private preview is live, authentication-gated, and crawler-blocked."
