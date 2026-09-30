@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-preview-refresh-20261001b",
-  "reason": "Refresh private preview from current Drive source."
+  "reason": "Disarmed after deployment attempt; waiting for Cloudflare token metadata read permission."
 }
