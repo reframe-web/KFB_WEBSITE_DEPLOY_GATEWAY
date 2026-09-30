@@ -122,7 +122,7 @@ jobs:
           output="$RUNNER_TEMP/kfb-wrangler-output.txt"
 
           set +e
-          npx --yes wrangler@4.129.1 deploy --config gateway/wrangler.preview.jsonc 2>&1 | tee "$output"
+          npx --yes wrangler@4.145.0 deploy --config gateway/wrangler.preview.jsonc 2>&1 | tee "$output"
           wrangler_status=${PIPESTATUS[0]}
           set -e
 
