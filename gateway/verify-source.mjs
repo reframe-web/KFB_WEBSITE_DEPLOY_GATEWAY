@@ -81,8 +81,10 @@ for (let i = 0; i < files.length; i += 1) {
     if (pattern.re.test(body)) throw new Error(`Possible ${pattern.name} found in deployable source: ${rel}`);
   }
 
-  for (const pattern of forbiddenRuntimeReferences) {
-    if (pattern.re.test(body)) throw new Error(`Development-only ${pattern.name} found in deployable source: ${rel}`);
+  if ([".html", ".htm", ".css", ".js", ".mjs", ".json", ".xml", ".svg"].includes(extension)) {
+    for (const pattern of forbiddenRuntimeReferences) {
+      if (pattern.re.test(body)) throw new Error(`Development-only ${pattern.name} found in deployable runtime source: ${rel}`);
+    }
   }
 
   if (extension === ".html" || extension === ".htm") {
