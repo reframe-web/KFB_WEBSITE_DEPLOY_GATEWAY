@@ -1,0 +1,167 @@
+name: Deploy KFB private preview from Drive
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Reason for this preview deployment"
+        required: false
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/preview-request.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kfb-private-preview
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DRIVE_SOURCE_FOLDER_ID: "1nIQrLm5e2mXIAAyE6pF-SdxSuiOhqyV8"
+
+    steps:
+      - name: Check out deployment gateway
+        uses: actions/checkout@v4
+
+      - name: Resolve guarded deployment request
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            reason="${{ inputs.reason }}"
+            if [ -z "$reason" ]; then reason="manual-preview-deploy"; fi
+            echo "armed=true" >> "$GITHUB_OUTPUT"
+            echo "request_id=workflow-dispatch-${{ github.run_id }}" >> "$GITHUB_OUTPUT"
+            echo "reason=$reason" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          request=".deploy/preview-request.json"
+          test -f "$request"
+
+          schema="$(jq -r '.schema // 0' "$request")"
+          deploy="$(jq -r '.deploy // false' "$request")"
+          request_id="$(jq -r '.request_id // ""' "$request")"
+          reason="$(jq -r '.reason // "drive-preview-request"' "$request")"
+
+          if [ "$schema" != "1" ]; then
+            echo "Unsupported preview request schema: $schema" >&2
+            exit 1
+          fi
+
+          if [ "$deploy" != "true" ]; then
+            echo "armed=false" >> "$GITHUB_OUTPUT"
+            echo "request_id=$request_id" >> "$GITHUB_OUTPUT"
+            echo "reason=not-armed" >> "$GITHUB_OUTPUT"
+            echo "Preview request is not armed; no deployment will run."
+            exit 0
+          fi
+
+          if ! [[ "$request_id" =~ ^[A-Za-z0-9._:-]+$ ]]; then
+            echo "Invalid preview request_id." >&2
+            exit 1
+          fi
+
+          echo "armed=true" >> "$GITHUB_OUTPUT"
+          echo "request_id=$request_id" >> "$GITHUB_OUTPUT"
+          echo "reason=$reason" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Node.js
+        if: steps.request.outputs.armed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Define temporary Drive snapshot
+        if: steps.request.outputs.armed == 'true'
+        shell: bash
+        run: |
+          echo "SNAPSHOT_DIR=$RUNNER_TEMP/kfb-drive-source" >> "$GITHUB_ENV"
+
+      - name: Fetch stable read-only Drive snapshot
+        if: steps.request.outputs.armed == 'true'
+        id: snapshot
+        env:
+          GDRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON }}
+        shell: bash
+        run: node gateway/fetch-drive-source.mjs
+
+      - name: Validate KFB site source
+        if: steps.request.outputs.armed == 'true'
+        shell: bash
+        run: node gateway/verify-source.mjs "$SNAPSHOT_DIR"
+
+      - name: Stage ephemeral static assets
+        if: steps.request.outputs.armed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .runtime-site
+          mkdir -p .runtime-site
+          cp -a "$SNAPSHOT_DIR"/. .runtime-site/
+
+      - name: Deploy fail-closed private preview
+        if: steps.request.outputs.armed == 'true'
+        id: deploy
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$RUNNER_TEMP/kfb-wrangler-output.txt"
+
+          npx --yes wrangler@4.129.1 deploy --config gateway/wrangler.preview.jsonc 2>&1 | tee "$output"
+
+          origin="$(grep -Eo 'https://[A-Za-z0-9.-]+\.workers\.dev' "$output" | tail -n 1 || true)"
+          if [ -n "$origin" ]; then
+            echo "preview_origin=$origin" >> "$GITHUB_OUTPUT"
+
+            robots_code="$(curl -sS -o "$RUNNER_TEMP/robots.txt" -w '%{http_code}' "$origin/robots.txt")"
+            test "$robots_code" = "200"
+            grep -Fq "Disallow: /" "$RUNNER_TEMP/robots.txt"
+
+            private_code="$(curl -sS -o "$RUNNER_TEMP/private-check.txt" -w '%{http_code}' "$origin/ja/")"
+            if [ "$private_code" != "401" ] && [ "$private_code" != "503" ]; then
+              echo "Private preview unexpectedly returned HTTP $private_code without credentials." >&2
+              exit 1
+            fi
+          else
+            echo "Wrangler did not report a workers.dev origin; deploy succeeded but live privacy check was skipped."
+          fi
+
+      - name: Write deployment summary
+        if: steps.request.outputs.armed == 'true' && success()
+        shell: bash
+        run: |
+          {
+            echo "## KFB private preview deployment"
+            echo
+            echo "- Canonical source: Google Drive / KFB WEBSITE DEV / 40_SITE / SOURCE"
+            echo "- Drive source fingerprint: ${{ steps.snapshot.outputs.source_fingerprint }}"
+            echo "- Worker: kfb-preview"
+            echo "- Public production domain connected: no"
+            echo "- Authentication policy: fail closed if KFB_PREVIEW_CREDENTIAL is missing"
+            echo "- Search policy: noindex + robots Disallow"
+            echo "- Request ID: ${{ steps.request.outputs.request_id }}"
+            echo "- Reason: ${{ steps.request.outputs.reason }}"
+            if [ -n "${{ steps.deploy.outputs.preview_origin }}" ]; then
+              echo "- Preview origin: ${{ steps.deploy.outputs.preview_origin }}"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Remove temporary KFB source snapshot
+        if: always()
+        shell: bash
+        run: |
+          if [ -n "${SNAPSHOT_DIR:-}" ] && [ -d "$SNAPSHOT_DIR" ]; then rm -rf "$SNAPSHOT_DIR"; fi
+          rm -rf .runtime-site
