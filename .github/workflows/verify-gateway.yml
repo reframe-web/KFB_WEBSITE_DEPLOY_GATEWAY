@@ -1,0 +1,92 @@
+name: Verify KFB deploy gateway
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "gateway/**"
+      - ".github/workflows/**"
+      - "README.md"
+      - ".gitignore"
+  pull_request:
+    paths:
+      - "gateway/**"
+      - ".github/workflows/**"
+      - "README.md"
+      - ".gitignore"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out gateway
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Check JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check gateway/fetch-drive-source.mjs
+          node --check gateway/verify-source.mjs
+          node --check gateway/worker.mjs
+
+      - name: Validate preview Worker configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require("fs");
+          const config = JSON.parse(fs.readFileSync("gateway/wrangler.preview.jsonc", "utf8"));
+          if (config.name !== "kfb-preview") throw new Error("Worker name must remain kfb-preview.");
+          if (config.main !== "worker.mjs") throw new Error("Unexpected Worker entry point.");
+          if (config.assets?.binding !== "ASSETS") throw new Error("Static assets binding is missing.");
+          if (config.assets?.run_worker_first !== true) throw new Error("Authentication Worker must run before static assets.");
+          if (config.assets?.directory !== "../.runtime-site") throw new Error("Preview must deploy only the ephemeral runtime snapshot.");
+          NODE
+
+      - name: Verify privacy guardrails
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq 'KFB_PREVIEW_CREDENTIAL' gateway/worker.mjs
+          grep -Fq 'Authentication required.' gateway/worker.mjs
+          grep -Fq 'X-Robots-Tag' gateway/worker.mjs
+          grep -Fq 'Disallow: /' gateway/worker.mjs
+          grep -Fq 'status: 503' gateway/worker.mjs
+          grep -Fq 'permissions:' .github/workflows/deploy-preview.yml
+          grep -Fq 'contents: read' .github/workflows/deploy-preview.yml
+
+      - name: Reject legacy owner and embedded secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RFn --exclude-dir=.git 'hungrypriest1224-create' .; then
+            echo "Legacy GitHub owner remains in current gateway files." >&2
+            exit 1
+          fi
+
+          if grep -REn --exclude-dir=.git -- '-----BEGIN [A-Z ]*PRIVATE KEY-----|github_pat_[A-Za-z0-9_]{20,}|ghp_[A-Za-z0-9]{20,}' .; then
+            echo "Possible secret material found in the public gateway repository." >&2
+            exit 1
+          fi
+
+      - name: Ensure canonical site source is not committed
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e ja/index.html
+          test ! -e en/index.html
+          test ! -e assets/css/site.css
+          test ! -e assets/js/site.js
+          test ! -d .runtime-site
