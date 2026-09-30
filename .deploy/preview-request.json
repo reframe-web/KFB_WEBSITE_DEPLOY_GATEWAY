@@ -1,0 +1,6 @@
+{
+  "schema": 1,
+  "deploy": false,
+  "request_id": "bootstrap",
+  "reason": "Gateway bootstrap only; no preview deployment requested yet."
+}
