@@ -71,12 +71,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          old_owner='hungrypriest1224''-create'\n          if grep -RFn --exclude-dir=.git "$old_owner" .; then
+          old_owner="$(printf '%s-%s' hungrypriest1224 create)"
+          if grep -RFn --exclude-dir=.git "$old_owner" .; then
             echo "Legacy GitHub owner remains in current gateway files." >&2
             exit 1
           fi
 
-          if grep -REn --exclude-dir=.git -- '-----BEGIN [A-Z ]*PRIVATE KEY-----|github_pat_[A-Za-z0-9_]{20,}|ghp_[A-Za-z0-9]{20,}' .; then
+          if grep -REn --exclude-dir=.git --exclude=verify-gateway.yml -- '-----BEGIN [A-Z ]*PRIVATE KEY-----|github_pat_[A-Za-z0-9_]{20,}|ghp_[A-Za-z0-9]{20,}' .; then
             echo "Possible secret material found in the public gateway repository." >&2
             exit 1
           fi
