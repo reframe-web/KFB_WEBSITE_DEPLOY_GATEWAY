@@ -71,7 +71,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -RFn --exclude-dir=.git 'hungrypriest1224-create' .; then
+          old_owner='hungrypriest1224''-create'\n          if grep -RFn --exclude-dir=.git "$old_owner" .; then
             echo "Legacy GitHub owner remains in current gateway files." >&2
             exit 1
           fi
