@@ -108,6 +108,7 @@ jobs:
           rm -rf .runtime-site
           mkdir -p .runtime-site
           cp -a "$SNAPSHOT_DIR"/. .runtime-site/
+          rm -f .runtime-site/README.txt
 
       - name: Deploy fail-closed private preview
         if: steps.request.outputs.armed == 'true'
@@ -120,24 +121,36 @@ jobs:
           set -euo pipefail
           output="$RUNNER_TEMP/kfb-wrangler-output.txt"
 
+          set +e
           npx --yes wrangler@4.129.1 deploy --config gateway/wrangler.preview.jsonc 2>&1 | tee "$output"
+          wrangler_status=${PIPESTATUS[0]}
+          set -e
 
-          origin="$(grep -Eo 'https://[A-Za-z0-9.-]+\.workers\.dev' "$output" | tail -n 1 || true)"
-          if [ -n "$origin" ]; then
-            echo "preview_origin=$origin" >> "$GITHUB_OUTPUT"
-
-            robots_code="$(curl -sS -o "$RUNNER_TEMP/robots.txt" -w '%{http_code}' "$origin/robots.txt")"
-            test "$robots_code" = "200"
-            grep -Fq "Disallow: /" "$RUNNER_TEMP/robots.txt"
-
-            private_code="$(curl -sS -o "$RUNNER_TEMP/private-check.txt" -w '%{http_code}' "$origin/ja/")"
-            if [ "$private_code" != "401" ] && [ "$private_code" != "503" ]; then
-              echo "Private preview unexpectedly returned HTTP $private_code without credentials." >&2
-              exit 1
+          if [ "$wrangler_status" -ne 0 ]; then
+            if grep -Fq "Uploaded kfb-preview" "$output" \
+              && grep -Fq "/workers/subdomain" "$output" \
+              && grep -Fq "Authentication error [code: 10000]" "$output"; then
+              echo "Wrangler uploaded kfb-preview successfully; continuing after its account-subdomain lookup was denied by the intentionally per-Worker API token."
+            else
+              echo "Wrangler deployment failed before a verified Worker upload." >&2
+              exit "$wrangler_status"
             fi
-          else
-            echo "Wrangler did not report a workers.dev origin; deploy succeeded but live privacy check was skipped."
           fi
+
+          origin="https://kfb-preview.hungrypriest1224.workers.dev"
+          echo "preview_origin=$origin" >> "$GITHUB_OUTPUT"
+
+          robots_code="$(curl -sS -o "$RUNNER_TEMP/robots.txt" -D "$RUNNER_TEMP/robots.headers" -w '%{http_code}' "$origin/robots.txt")"
+          test "$robots_code" = "200"
+          grep -Fq "Disallow: /" "$RUNNER_TEMP/robots.txt"
+          grep -Fiq "x-robots-tag: noindex, nofollow, noarchive" "$RUNNER_TEMP/robots.headers"
+
+          private_code="$(curl -sS -o "$RUNNER_TEMP/private-check.txt" -D "$RUNNER_TEMP/private.headers" -w '%{http_code}' "$origin/ja/")"
+          if [ "$private_code" != "401" ] && [ "$private_code" != "503" ]; then
+            echo "Private preview unexpectedly returned HTTP $private_code without credentials." >&2
+            exit 1
+          fi
+          grep -Fiq "x-robots-tag: noindex, nofollow, noarchive" "$RUNNER_TEMP/private.headers"
 
       - name: Write deployment summary
         if: steps.request.outputs.armed == 'true' && success()
