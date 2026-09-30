@@ -1,0 +1,10 @@
+{
+  "name": "kfb-preview",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-09-30",
+  "assets": {
+    "directory": "../.runtime-site",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  }
+}
