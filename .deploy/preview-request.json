@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-full-en-archive-pages-final-20261001",
-  "reason": "Disarmed after successful final protected-preview deployment of the complete bilingual archive page build."
+  "deploy": true,
+  "request_id": "kfb-public-launch-20261001-1707",
+  "reason": "Publish kfbokinawa.org from the Drive canonical source while keeping the workers.dev legacy-review preview authenticated and noindex."
 }
