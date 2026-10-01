@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-public-safe-runtime-20261001-1732",
-  "reason": "Disarmed after successful deployment and live verification of the public-safe activity feed runtime. Canonical apex production is public; the workers.dev review host remains authenticated/noindex; www remains a separate unresolved alias."
+  "deploy": true,
+  "request_id": "kfb-auth-gate-20261001-1815",
+  "reason": "Restore the existing authentication gate and crawler blocking on the canonical KFB domain for client review."
 }
