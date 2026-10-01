@@ -346,10 +346,15 @@ async function publicSite(request, env, url) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.hostname === PUBLIC_HOST || url.hostname === WWW_HOST) {
-      return publicSite(request, env, url);
+
+    if (url.hostname === WWW_HOST) {
+      const target = new URL(request.url);
+      target.hostname = PUBLIC_HOST;
+      target.protocol = "https:";
+      return Response.redirect(target.toString(), 301);
     }
-    if (url.hostname === PREVIEW_HOST || url.hostname.endsWith(".workers.dev")) {
+
+    if (url.hostname === PUBLIC_HOST || url.hostname === PREVIEW_HOST || url.hostname.endsWith(".workers.dev")) {
       return privatePreview(request, env, url);
     }
 
