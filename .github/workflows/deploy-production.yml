@@ -1,0 +1,166 @@
+name: Deploy KFB production from Drive
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Reason for this production deployment"
+        required: false
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/production-request.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kfb-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DRIVE_SOURCE_FOLDER_ID: "1nIQrLm5e2mXIAAyE6pF-SdxSuiOhqyV8"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve production request
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            reason="${{ inputs.reason }}"
+            if [ -z "$reason" ]; then reason="manual-production-deploy"; fi
+            echo "armed=true" >> "$GITHUB_OUTPUT"
+            echo "reason=$reason" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          schema="$(jq -r '.schema // 0' .deploy/production-request.json)"
+          deploy="$(jq -r '.deploy // false' .deploy/production-request.json)"
+          reason="$(jq -r '.reason // "production-request"' .deploy/production-request.json)"
+          test "$schema" = "1"
+          if [ "$deploy" != "true" ]; then
+            echo "armed=false" >> "$GITHUB_OUTPUT"
+            echo "reason=not-armed" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "armed=true" >> "$GITHUB_OUTPUT"
+          echo "reason=$reason" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Node.js
+        if: steps.request.outputs.armed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Define snapshot path
+        if: steps.request.outputs.armed == 'true'
+        shell: bash
+        run: echo "SNAPSHOT_DIR=$RUNNER_TEMP/kfb-drive-source" >> "$GITHUB_ENV"
+
+      - name: Fetch Drive source
+        if: steps.request.outputs.armed == 'true'
+        id: snapshot
+        env:
+          GDRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON }}
+        shell: bash
+        run: node gateway/fetch-drive-source.mjs
+
+      - name: Build public snapshot
+        if: steps.request.outputs.armed == 'true'
+        shell: bash
+        run: node gateway/build-production.mjs "$SNAPSHOT_DIR"
+
+      - name: Validate public snapshot
+        if: steps.request.outputs.armed == 'true'
+        shell: bash
+        run: node gateway/verify-production.mjs "$SNAPSHOT_DIR"
+
+      - name: Stage static assets
+        if: steps.request.outputs.armed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .runtime-site
+          mkdir -p .runtime-site
+          cp -a "$SNAPSHOT_DIR"/. .runtime-site/
+          rm -f .runtime-site/README.txt
+
+      - name: Deploy public Worker
+        if: steps.request.outputs.armed == 'true'
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$RUNNER_TEMP/wrangler-production.txt"
+          set +e
+          npx --yes wrangler@4.145.0 deploy --config gateway/wrangler.production.jsonc 2>&1 | tee "$output"
+          status=${PIPESTATUS[0]}
+          set -e
+          if [ "$status" -ne 0 ]; then
+            if grep -Fq "Uploaded kfb-preview" "$output" && grep -Fq "Authentication error [code: 10000]" "$output"; then
+              echo "Worker upload succeeded before the restricted account-level lookup."
+            else
+              exit "$status"
+            fi
+          fi
+
+      - name: Verify live production
+        if: steps.request.outputs.armed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          origin="https://kfbokinawa.org"
+
+          code="$(curl -sS -o "$RUNNER_TEMP/robots" -D "$RUNNER_TEMP/robots.h" -w '%{http_code}' "$origin/robots.txt")"
+          test "$code" = "200"
+          grep -Fq "Allow: /" "$RUNNER_TEMP/robots"
+          grep -Fq "Sitemap: https://kfbokinawa.org/sitemap.xml" "$RUNNER_TEMP/robots"
+          ! grep -Fiq "x-robots-tag: noindex" "$RUNNER_TEMP/robots.h"
+
+          for path in / /ja/ /en/ /ja/about/ /en/about/ /ja/what-we-do/ /en/what-we-do/ /ja/activities/ /en/activities/ /ja/support/ /en/support/ /ja/contact/ /en/contact/ /sitemap.xml; do
+            code="$(curl -sS -o "$RUNNER_TEMP/page" -D "$RUNNER_TEMP/page.h" -w '%{http_code}' "$origin$path")"
+            test "$code" = "200"
+            ! grep -Fiq "www-authenticate:" "$RUNNER_TEMP/page.h"
+            if [ "$path" != "/sitemap.xml" ]; then ! grep -Fiq "noindex,nofollow" "$RUNNER_TEMP/page"; fi
+          done
+
+          curl -fsS "$origin/ja/contact/" | grep -Fq "info@kfbokinawa.org"
+          curl -fsS "$origin/en/contact/" | grep -Fq "info@kfbokinawa.org"
+          curl -fsS "$origin/ja/support/" | grep -Fq "カード寄付は現在準備中"
+          curl -fsS "$origin/en/support/" | grep -Fq "Card giving is currently being prepared"
+          curl -fsS "$origin/data/legacy-feed.json" | grep -Fq '"items":[]'
+
+          test "$(curl -sS -o /dev/null -w '%{http_code}' "$origin/data/legacy-preview.json")" = "404"
+          test "$(curl -sS -o /dev/null -w '%{http_code}' "$origin/ja/review/legacy-content/")" = "404"
+          test "$(curl -sS -o /dev/null -w '%{http_code}' "$origin/ja/activities/archive/legacy-tsukutsuku-8692/")" = "404"
+
+          sitemap="$(curl -fsS "$origin/sitemap.xml")"
+          echo "$sitemap" | grep -Fq "https://kfbokinawa.org/ja/"
+          echo "$sitemap" | grep -Fq "https://kfbokinawa.org/en/"
+          ! echo "$sitemap" | grep -Eq '/review/|/activities/archive/legacy-|legacy-preview'
+
+      - name: Summary
+        if: steps.request.outputs.armed == 'true' && success()
+        shell: bash
+        run: |
+          echo "## KFB production deployment" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Canonical source: Google Drive / KFB WEBSITE DEV / 40_SITE / SOURCE" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Source fingerprint: ${{ steps.snapshot.outputs.source_fingerprint }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Public origin: https://kfbokinawa.org" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Unreviewed legacy preview content: excluded" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Cleanup
+        if: always()
+        shell: bash
+        run: |
+          if [ -n "${SNAPSHOT_DIR:-}" ] && [ -d "$SNAPSHOT_DIR" ]; then rm -rf "$SNAPSHOT_DIR"; fi
+          rm -rf .runtime-site
