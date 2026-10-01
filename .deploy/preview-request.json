@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-unified-feed-jscheck-20261001",
-  "reason": "Disarmed after successful unified feed deployment and JavaScript validation."
+  "deploy": true,
+  "request_id": "kfb-legacy-client-review-20261001",
+  "reason": "Deploy protected legacy client review route and updated migration review workflow."
 }
