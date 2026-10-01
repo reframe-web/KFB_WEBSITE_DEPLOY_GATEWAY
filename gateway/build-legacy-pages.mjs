@@ -62,6 +62,7 @@ function pageHtml(item, lang) {
   const excerpt = isEn ? item.excerpt_en : item.excerpt_ja;
   const bodyRaw = isEn ? item.body_en : item.body_html;
   const body = sanitizeArchiveHtml(bodyRaw || "");
+  const bodyHasText = stripHtml(body).length > 0;
   const url = item[`url_${lang}`];
   const otherLang = isEn ? "ja" : "en";
   const altUrl = item[`url_${otherLang}`];
@@ -116,7 +117,7 @@ function pageHtml(item, lang) {
 <header class="site-header"><div class="shell header-inner"><a class="brand" href="/${lang}/"><img class="brand-logo" src="/assets/images/kfb-mark.webp" width="300" height="300" alt=""><span class="brand-name">${esc(brandName)}</span></a><button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="primary-nav" aria-label="${isEn ? "Open menu" : "メニューを開く"}">☰</button><nav class="nav" id="primary-nav" data-nav>${nav}<a class="nav-lang" href="${esc(altUrl)}">${langName}</a></nav></div></header>
 <main id="main"><article class="legacy-article"><div class="legacy-hero"><nav class="breadcrumb"><a href="/${lang}/">${home}</a><span>/</span><a href="/${lang}/activities/">${reports}</a><span>/</span><span>${isEn ? "Archive" : "活動記録"}</span></nav><div class="eyebrow">${esc(label)}</div><h1>${esc(title)}</h1><div class="legacy-meta">${date ? `<time datetime="${esc(item.published_at)}">${esc(date)}</time>` : ""}<span>${isEn ? "KFB legacy archive" : "旧サイト移行記事"}</span></div></div>
 ${archiveNote}
-<div class="legacy-body">${body || `<p>${loadingFallback}</p>`}</div>
+<div class="legacy-body">${bodyHasText ? body : `<p>${esc(excerpt || loadingFallback)}</p>`}</div>
 ${sourceBox}
 </article></main>
 <footer class="footer"><div class="shell"><div class="footer-grid"><div><a class="brand" href="/${lang}/"><img class="brand-logo" src="/assets/images/kfb-mark.webp" width="300" height="300" alt=""><span class="brand-name">${esc(brandName)}</span></a><p>${isEn ? "Supporting children and families in Okinawa, Japan." : "沖縄で子どもと家庭を支える活動を行っています。"}</p></div><div class="footer-links"><strong>${isEn ? "Site" : "サイト"}</strong><a href="/${lang}/about/">${isEn ? "About KFB" : "KFBについて"}</a><a href="/${lang}/what-we-do/">${isEn ? "What We Do" : "活動内容"}</a><a href="/${lang}/activities/">${reports}</a><a href="/${lang}/support/">${isEn ? "Support Us" : "支援する"}</a></div><div class="footer-links"><strong>${isEn ? "Information" : "情報"}</strong><a href="/${lang}/contact/">${isEn ? "Contact" : "お問い合わせ"}</a><a href="${esc(altUrl)}">${langName}</a></div></div><div class="footer-bottom"><small>© Kodomo Food Bank KFB</small><small>${isEn ? "Private pre-release preview" : "公開前プレビュー"}</small></div></div></footer>
