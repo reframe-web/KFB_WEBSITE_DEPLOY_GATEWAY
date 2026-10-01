@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-source-tree-cleanup-20261001-1927",
-  "reason": "Deploy canonical Drive cleanup: remove obsolete legacy query routes and review redirect, keep authenticated noindex release unchanged."
+  "reason": "Disarmed after successful canonical Drive source-tree cleanup deployment. Auth gate, noindex and www redirect remain unchanged."
 }
