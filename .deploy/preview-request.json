@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-progressive-feed-en-parity-20261001",
-  "reason": "Deploy approved KFB placeholder artwork, progressive 12-item activity loading, lightweight legacy feed metadata, and English legacy route parity to the protected preview."
+  "reason": "Disarmed after successful protected-preview deployment of progressive activity loading, approved placeholder artwork, lightweight legacy feed metadata, and English legacy route parity."
 }
