@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-progressive-feed-en-parity-20261001",
-  "reason": "Disarmed after successful protected-preview deployment of progressive activity loading, approved placeholder artwork, lightweight legacy feed metadata, and English legacy route parity."
+  "deploy": true,
+  "request_id": "kfb-full-en-archive-pages-20261001",
+  "reason": "Deploy complete bilingual legacy archive translations and generate one Japanese and one English static archive page for every migrated legacy item."
 }
