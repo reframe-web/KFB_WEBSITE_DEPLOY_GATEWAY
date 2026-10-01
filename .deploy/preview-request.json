@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-unified-feed-retry2-20261001",
-  "reason": "Disarmed after successful unified content-feed deployment."
+  "deploy": true,
+  "request_id": "kfb-unified-feed-jscheck-20261001",
+  "reason": "Revalidate deployed source with classic JavaScript syntax checks after unified feed launch."
 }
