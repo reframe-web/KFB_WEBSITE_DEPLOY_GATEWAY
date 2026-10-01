@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-legacy-full-content-review-20261001",
-  "reason": "Disarmed after successful full protected legacy content review deployment."
+  "deploy": true,
+  "request_id": "kfb-legacy-normal-site-migration-20261001",
+  "reason": "Deploy all legacy content into the normal protected Activities site flow; client decides page-specific edits/deletions after review."
 }
