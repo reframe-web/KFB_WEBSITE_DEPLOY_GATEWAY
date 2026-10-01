@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-legacy-client-review-20261001",
-  "reason": "Disarmed after successful protected legacy client review deployment."
+  "deploy": true,
+  "request_id": "kfb-legacy-full-content-review-20261001",
+  "reason": "Deploy full protected legacy content review with migrated body and image references for all 201 items."
 }
