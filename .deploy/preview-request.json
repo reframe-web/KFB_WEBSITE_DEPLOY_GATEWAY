@@ -1,6 +1,6 @@
 {
   "schema": 1,
   "deploy": true,
-  "request_id": "kfb-public-launch-20261001-1707",
-  "reason": "Publish kfbokinawa.org from the Drive canonical source while keeping the workers.dev legacy-review preview authenticated and noindex."
+  "request_id": "kfb-public-launch-final-20261001-1715",
+  "reason": "Final public launch deploy: canonical domain public and indexable, workers.dev review preview private, unreviewed legacy content excluded from the public host, privacy pages and public-safe support copy enabled."
 }
