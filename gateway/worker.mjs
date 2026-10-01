@@ -73,18 +73,6 @@ function removeAnnualSection(html) {
   );
 }
 
-function addPrivacyLink(html, lang) {
-  const marker = lang === "en" ? "<strong>Information</strong>" : "<strong>情報</strong>";
-  const href = lang === "en" ? "/en/privacy/" : "/ja/privacy/";
-  const label = lang === "en" ? "Privacy" : "プライバシー";
-  if (html.includes(`href="${href}"`)) return html;
-  const start = html.lastIndexOf(`<div class="footer-links">${marker}`);
-  if (start < 0) return html;
-  const end = html.indexOf("</div>", start);
-  if (end < 0) return html;
-  return html.slice(0, end) + `<a href="${href}">${label}</a>` + html.slice(end);
-}
-
 function publicizeHtml(input) {
   let html = String(input);
 
@@ -98,8 +86,18 @@ function publicizeHtml(input) {
     .replaceAll("公開前プレビュー：検索エンジン非公開", "")
     .replaceAll("公開前プレビュー", "")
     .replaceAll("Private pre-release preview", "")
-    .replaceAll("Stripe導入設計", "準備中")
-    .replaceAll("Stripe-ready design", "In preparation")
+    .replaceAll("Stripe導入設計", "カード寄付は準備中")
+    .replaceAll("Stripe-ready design", "Card giving in preparation")
+    .replaceAll("Stripe接続後に利用可能", "カード寄付は準備中です")
+    .replaceAll("Available after Stripe setup", "Card giving is being prepared")
+    .replace(
+      "「種類」は記事の役割、「テーマ」は記事の内容を表します。新しい記事を追加すると、この一覧とTOPの新着が同じ正本から更新されます。",
+      "記事の種類やテーマで絞り込んでご覧いただけます。"
+    )
+    .replace(
+      "Type describes the role of a post; topic tags describe its subject. New posts update this feed and the home-page latest section from the same publication index.",
+      "Use the type and topic filters to explore KFB updates."
+    )
     .replace(
       "日々の活動と、年度ごとの活動・会計情報を一つの流れで確認できるサイトを目指しています。確認できた資料から順に整理します。",
       "日々の活動と、年度ごとの活動・会計情報を一つの流れでご覧いただけます。"
@@ -121,6 +119,10 @@ function publicizeHtml(input) {
       "KFBの活動は、大きく「子どもの居場所・食事提供」と「ひとり親家庭などへの食料・物資支援」の二つの柱で取り組んでいます。"
     )
     .replace(
+      "新サイトではStripeで分かりやすく決済できる形を準備しています。",
+      "カード寄付は現在準備中です。銀行振込は現在ご利用いただけます。"
+    )
+    .replace(
       "The new site is being prepared for simple card giving through Stripe while retaining bank transfer options.",
       "You can support KFB by bank transfer, partnership, volunteering, and—once available—card giving."
     )
@@ -132,6 +134,18 @@ function publicizeHtml(input) {
       "Bank-transfer fees, if any, depend on your bank. Details will be reconfirmed before public launch.",
       "Bank-transfer fees, if any, depend on your bank."
     );
+
+  if (html.includes('Stripe接続後に利用可能')) {
+    html = html.replace(
+      /<div class="support-plans">[\s\S]*?<\/div>\s*<div class="preview-note">/iu,
+      '<div class="info-card"><h3>現在ご利用いただける支援方法</h3><p>銀行振込をご利用いただけます。企業・団体からのご支援やボランティアについてもお問い合わせください。</p></div><div class="preview-note">'
+    );
+  } else if (html.includes('Available after Stripe setup')) {
+    html = html.replace(
+      /<div class="support-plans">[\s\S]*?<\/div>\s*<div class="preview-note">/iu,
+      '<div class="info-card"><h3>Ways to support KFB now</h3><p>Domestic bank transfer is currently available. Companies, organizations and prospective volunteers are also welcome to contact KFB.</p></div><div class="preview-note">'
+    );
+  }
 
   html = html.replace(
     /<div class="preview-note"><strong>現在は非公開プレビューです。<\/strong>[\s\S]*?<\/div>/giu,
@@ -152,8 +166,6 @@ function publicizeHtml(input) {
 
   html = removeAnnualSection(html);
 
-  const lang = /<html\s+lang="en"/iu.test(html) ? "en" : "ja";
-  html = addPrivacyLink(html, lang);
 
   return html;
 }
@@ -166,8 +178,7 @@ async function publicSitemap(request, env) {
     "/ja/what-we-do/", "/en/what-we-do/",
     "/ja/activities/", "/en/activities/",
     "/ja/support/", "/en/support/",
-    "/ja/contact/", "/en/contact/",
-    "/ja/privacy/", "/en/privacy/"
+    "/ja/contact/", "/en/contact/"
   ];
 
   const dataUrl = new URL("/data/content-index.json", request.url);
