@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-full-en-archive-pages-20261001",
-  "reason": "Disarmed after successful protected-preview deployment of the complete bilingual archive page build."
+  "deploy": true,
+  "request_id": "kfb-full-en-archive-pages-final-20261001",
+  "reason": "Redeploy the completed bilingual archive page build with source-excerpt fallback for legacy records whose preserved body text is empty."
 }
