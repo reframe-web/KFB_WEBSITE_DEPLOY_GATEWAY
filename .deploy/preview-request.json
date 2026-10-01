@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-full-en-archive-pages-20261001",
-  "reason": "Deploy complete bilingual legacy archive translations and generate one Japanese and one English static archive page for every migrated legacy item."
+  "reason": "Disarmed after successful protected-preview deployment of the complete bilingual archive page build."
 }
