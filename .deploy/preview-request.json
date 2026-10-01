@@ -1,6 +1,6 @@
 {
   "schema": 1,
   "deploy": true,
-  "request_id": "kfb-public-launch-final-20261001-1715",
-  "reason": "Final public launch deploy: canonical domain public and indexable, workers.dev review preview private, unreviewed legacy content excluded from the public host, privacy pages and public-safe support copy enabled."
+  "request_id": "kfb-www-custom-domain-20261001-1724",
+  "reason": "Attach and verify both kfbokinawa.org and www.kfbokinawa.org as Worker custom domains while preserving the authenticated workers.dev review preview."
 }
