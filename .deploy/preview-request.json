@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-auth-gate-verify-20261001-1840",
-  "reason": "Disarmed after successful verification of the canonical KFB domain with the existing authentication gate, noindex and crawler blocking. The www redirect remains active."
+  "deploy": true,
+  "request_id": "kfb-source-tree-cleanup-20261001-1927",
+  "reason": "Deploy canonical Drive cleanup: remove obsolete legacy query routes and review redirect, keep authenticated noindex release unchanged."
 }
