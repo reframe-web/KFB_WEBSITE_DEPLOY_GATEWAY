@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-legacy-client-review-20261001",
-  "reason": "Deploy protected legacy client review route and updated migration review workflow."
+  "reason": "Disarmed after successful protected legacy client review deployment."
 }
