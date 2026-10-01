@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-preview-security-20261001-0942",
-  "reason": "Apply explicit preview_urls=false hardening to private preview Worker."
+  "reason": "Disarmed after successful hardened private preview deployment."
 }
