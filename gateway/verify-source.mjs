@@ -101,7 +101,7 @@ for (let i = 0; i < files.length; i += 1) {
 if (htmlCount < 3) throw new Error("Expected at least the root, Japanese, and English HTML documents.");
 
 const contentIndexPath = join(root, "data", "content-index.json");
-const contentIndex = JSON.parse(await readFile(contentIndexPath, "utf8"));
+const contentIndex = JSON.parse((await readFile(contentIndexPath, "utf8")).replace(/^\\uFEFF/u, ""));
 const allowedContentTypes = new Set(["activity_report", "youtube_report", "news", "event", "blog"]);
 const allowedStatuses = new Set(["published"]);
 const allowedPrivacy = new Set(["public_safe"]);
