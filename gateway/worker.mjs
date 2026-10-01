@@ -13,6 +13,7 @@ function constantTimeEqual(a, b) {
 const PUBLIC_HOST = "kfbokinawa.org";
 const WWW_HOST = "www.kfbokinawa.org";
 const PREVIEW_HOST = "kfb-preview.hungrypriest1224.workers.dev";
+const PUBLIC_CONTENT_FEED_SCRIPT = "(function publicFeedFactory() {\n  const DATA_URL = \"/data/content-index.json\";\n  const lang = document.documentElement.lang?.toLowerCase().startsWith(\"en\") ? \"en\" : \"ja\";\n  const INITIAL_BATCH = 12;\n  const BATCH_SIZE = 12;\n\n  const esc = (value = \"\") => String(value).replace(/[&<>\"']/g, (ch) => ({\n    \"&\": \"&amp;\", \"<\": \"&lt;\", \">\": \"&gt;\", '\"': \"&quot;\", \"'\": \"&#39;\"\n  })[ch]);\n\n  const itemDate = (item) => item.published_at ? Date.parse(item.published_at + \"T00:00:00Z\") : -Infinity;\n  const sortItems = (items) => [...items].sort((a, b) => itemDate(b) - itemDate(a) || String(a.id).localeCompare(String(b.id)));\n  const local = (item, field) => item[field + \"_\" + lang] || item[field + \"_ja\"] || \"\";\n  const urlFor = (item) => item[\"url_\" + lang] || item.url_ja || \"#\";\n\n  const formatDate = (date) => {\n    if (!date) return \"\";\n    const d = new Date(date + \"T00:00:00Z\");\n    if (Number.isNaN(d.getTime())) return \"\";\n    return new Intl.DateTimeFormat(lang === \"ja\" ? \"ja-JP\" : \"en-US\", {\n      year: \"numeric\", month: lang === \"ja\" ? \"2-digit\" : \"short\", day: \"2-digit\", timeZone: \"UTC\"\n    }).format(d);\n  };\n\n  const mediaHtml = (item) => {\n    const image = item.image || {};\n    const alt = lang === \"en\" ? (image.alt_en || image.alt_ja || \"\") : (image.alt_ja || \"\");\n    if (image.brand) {\n      return `<div class=\"activity-card-media activity-card-media-placeholder\"><img class=\"activity-placeholder-image\" src=\"/assets/images/kfb-article-placeholder.webp\" width=\"1280\" height=\"800\" loading=\"lazy\" decoding=\"async\" alt=\"\"><span class=\"activity-media-label\">${esc(lang === \"ja\" ? \"KFB更新情報\" : \"KFB update\")}</span></div>`;\n    }\n    const src = image.src || \"/assets/images/kfb-article-placeholder.webp\";\n    const webp = image.webp ? `<source srcset=\"${esc(image.webp)}\" type=\"image/webp\">` : \"\";\n    return `<div class=\"activity-card-media\"><picture>${webp}<img src=\"${esc(src)}\" width=\"960\" height=\"720\" loading=\"lazy\" decoding=\"async\" alt=\"${esc(alt)}\"></picture><span class=\"activity-media-label\">${esc(lang === \"ja\" ? \"KFB更新情報\" : \"KFB update\")}</span></div>`;\n  };\n\n  const cardHtml = (item, data) => {\n    const typeLabel = data.types?.[item.type]?.[lang] || data.types?.[item.type]?.ja || item.type || \"\";\n    const dateText = formatDate(item.published_at);\n    const tagLabels = (item.tags || []).map((tag) => data.tags?.[tag]?.[lang] || data.tags?.[tag]?.ja).filter(Boolean);\n    const tags = tagLabels.slice(0, 2).map((tag) => `<span class=\"tag\">${esc(tag)}</span>`).join(\"\");\n    const date = dateText ? `<time datetime=\"${esc(item.published_at)}\">${esc(dateText)}</time>` : \"\";\n    return `<a class=\"activity-card\" href=\"${esc(urlFor(item))}\" data-content-type=\"${esc(item.type)}\" data-content-tags=\"${esc((item.tags || []).join(\" \"))}\">\n      ${mediaHtml(item)}\n      <div class=\"activity-card-body\">\n        <div class=\"meta-row\">${date}<span class=\"tag feed-type-tag\">${esc(typeLabel)}</span>${tags}</div>\n        <h3>${esc(local(item, \"title\"))}</h3>\n        <p>${esc(local(item, \"excerpt\"))}</p>\n        <span class=\"activity-card-link\">${esc(lang === \"ja\" ? \"続きを読む →\" : \"Read more →\")}</span>\n      </div>\n    </a>`;\n  };\n\n  const renderLatest = (data) => {\n    const items = sortItems((data.items || []).filter((item) => item.published_at));\n    document.querySelectorAll(\"[data-kfb-latest]\").forEach((container) => {\n      const limit = Number(container.dataset.kfbLatest || 3);\n      const latest = items.filter((item) => lang !== \"en\" || (item.title_en && item.url_en)).slice(0, limit);\n      if (latest.length) container.innerHTML = latest.map((item) => cardHtml(item, data)).join(\"\");\n    });\n  };\n\n  const renderFeed = (data) => {\n    document.querySelectorAll(\"[data-kfb-feed]\").forEach((section) => {\n      const list = section.querySelector(\"[data-kfb-feed-list]\");\n      const typeBar = section.querySelector(\"[data-kfb-type-filters]\");\n      const tagBar = section.querySelector(\"[data-kfb-tag-filters]\");\n      const count = section.querySelector(\"[data-kfb-feed-count]\");\n      const empty = section.querySelector(\"[data-kfb-feed-empty]\");\n      if (!list || !typeBar) return;\n\n      const allItems = sortItems(data.items || []);\n      let activeType = \"all\";\n      let activeTag = \"all\";\n      let filtered = [];\n      let shown = 0;\n\n      const typeOrder = data.type_order || Object.keys(data.types || {});\n      const typeCounts = Object.fromEntries(typeOrder.map((type) => [type, allItems.filter((item) => item.type === type).length]));\n      const tagCounts = {};\n      allItems.forEach((item) => (item.tags || []).forEach((tag) => { tagCounts[tag] = (tagCounts[tag] || 0) + 1; }));\n\n      typeBar.innerHTML = [\n        `<button class=\"feed-chip is-active\" type=\"button\" data-feed-type=\"all\" aria-pressed=\"true\">${esc(lang === \"ja\" ? \"すべて\" : \"All\")} <span>${allItems.length}</span></button>`,\n        ...typeOrder.map((type) => {\n          const n = typeCounts[type] || 0;\n          const label = data.types?.[type]?.[lang] || data.types?.[type]?.ja || type;\n          return `<button class=\"feed-chip\" type=\"button\" data-feed-type=\"${esc(type)}\" aria-pressed=\"false\" ${n === 0 ? \"disabled\" : \"\"}>${esc(label)} <span>${n}</span></button>`;\n        })\n      ].join(\"\");\n\n      const tags = Object.keys(tagCounts).sort((a,b) => tagCounts[b] - tagCounts[a] || a.localeCompare(b));\n      if (tagBar) {\n        tagBar.innerHTML = [\n          `<button class=\"feed-tag-chip is-active\" type=\"button\" data-feed-tag=\"all\" aria-pressed=\"true\">${esc(lang === \"ja\" ? \"全テーマ\" : \"All topics\")}</button>`,\n          ...tags.map((tag) => `<button class=\"feed-tag-chip\" type=\"button\" data-feed-tag=\"${esc(tag)}\" aria-pressed=\"false\">${esc(data.tags?.[tag]?.[lang] || data.tags?.[tag]?.ja || tag)} <span>${tagCounts[tag]}</span></button>`)\n        ].join(\"\");\n      }\n\n      const controls = document.createElement(\"div\");\n      controls.className = \"feed-loadmore\";\n      controls.innerHTML = `<button class=\"btn feed-loadmore-button\" type=\"button\" data-kfb-load-more>${esc(lang === \"ja\" ? \"さらに表示\" : \"Load more\")}</button><span class=\"feed-progress\" data-kfb-feed-progress aria-live=\"polite\"></span><span class=\"feed-sentinel\" data-kfb-feed-sentinel aria-hidden=\"true\"></span>`;\n      list.insertAdjacentElement(\"afterend\", controls);\n      const loadButton = controls.querySelector(\"[data-kfb-load-more]\");\n      const progress = controls.querySelector(\"[data-kfb-feed-progress]\");\n      const sentinel = controls.querySelector(\"[data-kfb-feed-sentinel]\");\n\n      const updateStatus = () => {\n        const total = filtered.length;\n        const visibleNow = Math.min(shown, total);\n        if (count) count.textContent = lang === \"ja\" ? `${visibleNow} / ${total}件表示` : `Showing ${visibleNow} of ${total}`;\n        if (progress) progress.textContent = total === 0 ? \"\" : (lang === \"ja\" ? `${visibleNow}件を表示中` : `${visibleNow} items shown`);\n        if (empty) empty.hidden = total !== 0;\n        if (loadButton) loadButton.hidden = total === 0 || visibleNow >= total;\n        controls.classList.toggle(\"is-complete\", total > 0 && visibleNow >= total);\n      };\n\n      const appendNext = () => {\n        if (shown >= filtered.length) return;\n        const next = Math.min(shown + BATCH_SIZE, filtered.length);\n        list.insertAdjacentHTML(\"beforeend\", filtered.slice(shown, next).map((item) => cardHtml(item, data)).join(\"\"));\n        shown = next;\n        updateStatus();\n      };\n\n      const apply = () => {\n        filtered = allItems.filter((item) => {\n          const typeOk = activeType === \"all\" || item.type === activeType;\n          const tagOk = activeTag === \"all\" || (item.tags || []).includes(activeTag);\n          return typeOk && tagOk;\n        });\n        shown = Math.min(INITIAL_BATCH, filtered.length);\n        list.innerHTML = filtered.slice(0, shown).map((item) => cardHtml(item, data)).join(\"\");\n        updateStatus();\n      };\n\n      loadButton?.addEventListener(\"click\", appendNext);\n      if (\"IntersectionObserver\" in window && sentinel) {\n        const observer = new IntersectionObserver((entries) => {\n          if (entries.some((entry) => entry.isIntersecting)) appendNext();\n        }, { rootMargin: \"700px 0px\" });\n        observer.observe(sentinel);\n      }\n\n      typeBar.addEventListener(\"click\", (event) => {\n        const button = event.target.closest(\"[data-feed-type]\");\n        if (!button || button.disabled) return;\n        activeType = button.dataset.feedType || \"all\";\n        typeBar.querySelectorAll(\"[data-feed-type]\").forEach((b) => {\n          const on = b === button;\n          b.classList.toggle(\"is-active\", on);\n          b.setAttribute(\"aria-pressed\", String(on));\n        });\n        apply();\n      });\n\n      tagBar?.addEventListener(\"click\", (event) => {\n        const button = event.target.closest(\"[data-feed-tag]\");\n        if (!button) return;\n        activeTag = button.dataset.feedTag || \"all\";\n        tagBar.querySelectorAll(\"[data-feed-tag]\").forEach((b) => {\n          const on = b === button;\n          b.classList.toggle(\"is-active\", on);\n          b.setAttribute(\"aria-pressed\", String(on));\n        });\n        apply();\n      });\n\n      apply();\n    });\n  };\n\n  fetch(DATA_URL, { credentials: \"same-origin\", cache: \"no-cache\" })\n    .then((response) => {\n      if (!response.ok) throw new Error(\"update data unavailable\");\n      return response.json();\n    })\n    .then((data) => {\n      renderLatest(data);\n      renderFeed(data);\n      document.documentElement.dataset.contentFeed = \"ready\";\n    })\n    .catch(() => {\n      document.documentElement.dataset.contentFeed = \"fallback\";\n    });\n})();";
 
 function securityHeaders(headers = new Headers()) {
   headers.set("X-Content-Type-Options", "nosniff");
@@ -184,6 +185,55 @@ function publicizeHtml(input) {
   return html;
 }
 
+
+async function publicContentIndex(request, env) {
+  const sourceUrl = new URL("/data/content-index.json", request.url);
+  const source = await env.ASSETS.fetch(new Request(sourceUrl.toString(), request));
+  if (!source.ok) return notFound();
+
+  let data;
+  try {
+    data = await source.json();
+  } catch {
+    return notFound();
+  }
+
+  const items = Array.isArray(data.items)
+    ? data.items
+        .filter((item) => item?.status === "published" && item?.privacy === "public_safe")
+        .map((item) => ({
+          id: item.id,
+          type: item.type,
+          published_at: item.published_at ?? null,
+          slug: item.slug ?? null,
+          url_ja: item.url_ja ?? null,
+          url_en: item.url_en ?? null,
+          title_ja: item.title_ja ?? "",
+          title_en: item.title_en ?? "",
+          excerpt_ja: item.excerpt_ja ?? "",
+          excerpt_en: item.excerpt_en ?? "",
+          tags: Array.isArray(item.tags) ? item.tags : [],
+          image: item.image && typeof item.image === "object" ? item.image : {},
+        }))
+    : [];
+
+  const body = JSON.stringify({
+    schema: 1,
+    updated_at: data.updated_at ?? null,
+    type_order: Array.isArray(data.type_order) ? data.type_order : [],
+    types: data.types && typeof data.types === "object" ? data.types : {},
+    tags: data.tags && typeof data.tags === "object" ? data.tags : {},
+    items,
+  });
+  const headers = publicHeaders(new Headers({ "Content-Type": "application/json; charset=utf-8" }), "application/json");
+  return new Response(body, { status: 200, headers });
+}
+
+function publicContentFeed() {
+  const headers = publicHeaders(new Headers({ "Content-Type": "application/javascript; charset=utf-8" }), "application/javascript");
+  return new Response(PUBLIC_CONTENT_FEED_SCRIPT, { status: 200, headers });
+}
+
 async function publicSitemap(request, env) {
   const base = "https://kfbokinawa.org";
   const core = [
@@ -268,6 +318,8 @@ async function publicSite(request, env, url) {
   }
 
   if (url.pathname === "/sitemap.xml") return publicSitemap(request, env);
+  if (url.pathname === "/data/content-index.json") return publicContentIndex(request, env);
+  if (url.pathname === "/assets/js/content-feed.js") return publicContentFeed();
   if (isPrivateOnlyPath(url.pathname)) return notFound();
 
   const assetResponse = await env.ASSETS.fetch(request);
