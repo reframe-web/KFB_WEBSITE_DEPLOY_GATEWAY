@@ -1,6 +1,6 @@
 {
   "schema": 1,
   "deploy": true,
-  "request_id": "kfb-unified-feed-retry-20261001",
-  "reason": "Retry unified KFB content feed after BOM-safe validation; source is now stable."
+  "request_id": "kfb-unified-feed-retry2-20261001",
+  "reason": "Retry unified KFB content feed after correcting BOM handling by code point."
 }
