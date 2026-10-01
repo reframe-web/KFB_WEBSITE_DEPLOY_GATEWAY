@@ -95,6 +95,11 @@ jobs:
         shell: bash
         run: node gateway/fetch-drive-source.mjs
 
+      - name: Generate bilingual legacy archive pages
+        if: steps.request.outputs.armed == 'true'
+        shell: bash
+        run: node gateway/build-legacy-pages.mjs "$SNAPSHOT_DIR"
+
       - name: Validate KFB site source
         if: steps.request.outputs.armed == 'true'
         shell: bash
