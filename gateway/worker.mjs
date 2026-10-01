@@ -178,6 +178,8 @@ function publicizeHtml(input) {
 
   html = removeAnnualSection(html);
 
+  const lang = /<html\s+lang="en"/iu.test(html) ? "en" : "ja";
+  html = addPrivacyLink(html, lang);
 
   return html;
 }
