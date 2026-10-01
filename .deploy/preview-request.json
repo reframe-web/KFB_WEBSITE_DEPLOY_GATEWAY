@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-activities-youtube-annual-20261001",
-  "reason": "Disarmed after successful activities, annual-report and YouTube-fix preview deployment."
+  "deploy": true,
+  "request_id": "kfb-unified-content-feed-20261001",
+  "reason": "Deploy unified activity/news/blog feed, automatic home latest cards, YouTube detail page, and content classification foundation from Drive."
 }
