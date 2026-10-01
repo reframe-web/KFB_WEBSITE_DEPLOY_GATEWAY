@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-public-safe-runtime-20261001-1732",
-  "reason": "Deploy the final public-safe activity feed runtime so the canonical host exposes only published content data and no private review-feed logic."
+  "reason": "Disarmed after successful deployment and live verification of the public-safe activity feed runtime. Canonical apex production is public; the workers.dev review host remains authenticated/noindex; www remains a separate unresolved alias."
 }
