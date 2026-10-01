@@ -16,7 +16,7 @@ function privacyHeaders(headers = new Headers()) {
   headers.set("Pragma", "no-cache");
   headers.set("X-Content-Type-Options", "nosniff");
   headers.set("X-Frame-Options", "DENY");
-  headers.set("Referrer-Policy", "no-referrer");
+  headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   return headers;
 }
 
