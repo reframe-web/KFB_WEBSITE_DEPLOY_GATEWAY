@@ -1,6 +1,6 @@
 {
   "schema": 1,
   "deploy": true,
-  "request_id": "kfb-auth-gate-20261001-1815",
-  "reason": "Restore the existing authentication gate and crawler blocking on the canonical KFB domain for client review."
+  "request_id": "kfb-auth-gate-verify-20261001-1840",
+  "reason": "Re-deploy and verify the canonical KFB domain with the existing authentication gate and crawler blocking."
 }
