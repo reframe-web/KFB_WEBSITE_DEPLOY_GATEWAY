@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-unified-feed-jscheck-20261001",
-  "reason": "Revalidate deployed source with classic JavaScript syntax checks after unified feed launch."
+  "reason": "Disarmed after successful unified feed deployment and JavaScript validation."
 }
