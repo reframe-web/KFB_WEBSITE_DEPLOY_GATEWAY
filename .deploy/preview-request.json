@@ -1,6 +1,6 @@
 {
   "schema": 1,
   "deploy": true,
-  "request_id": "kfb-www-custom-domain-20261001-1724",
-  "reason": "Attach and verify both kfbokinawa.org and www.kfbokinawa.org as Worker custom domains while preserving the authenticated workers.dev review preview."
+  "request_id": "kfb-public-launch-final-20261001-1723",
+  "reason": "Final canonical-domain redeploy after privacy navigation verification. Keep kfbokinawa.org public/indexable, workers.dev private/noindex, and unreviewed legacy migration content excluded from the public host."
 }
