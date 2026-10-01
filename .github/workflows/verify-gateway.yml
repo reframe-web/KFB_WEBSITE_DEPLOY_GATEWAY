@@ -40,6 +40,9 @@ jobs:
           node --check gateway/fetch-drive-source.mjs
           node --check gateway/verify-source.mjs
           node --check gateway/worker.mjs
+          node --check gateway/worker.production.mjs
+          node --check gateway/build-production.mjs
+          node --check gateway/verify-production.mjs
 
       - name: Validate preview Worker configuration
         shell: bash
@@ -54,6 +57,25 @@ jobs:
           if (config.assets?.run_worker_first !== true) throw new Error("Authentication Worker must run before static assets.");
           if (config.assets?.directory !== "../.runtime-site") throw new Error("Preview must deploy only the ephemeral runtime snapshot.");
           NODE
+
+      - name: Validate production Worker configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require("fs");
+          const config = JSON.parse(fs.readFileSync("gateway/wrangler.production.jsonc", "utf8"));
+          if (config.name !== "kfb-preview") throw new Error("Production deploy must target the currently connected KFB Worker.");
+          if (config.main !== "worker.production.mjs") throw new Error("Unexpected production Worker entry point.");
+          if (config.assets?.binding !== "ASSETS") throw new Error("Static assets binding is missing.");
+          if (config.assets?.run_worker_first !== true) throw new Error("Production Worker must run before static assets.");
+          if (config.assets?.directory !== "../.runtime-site") throw new Error("Production must deploy only the ephemeral runtime snapshot.");
+          NODE
+          grep -Fq 'Allow: /' gateway/worker.production.mjs
+          if grep -Fq 'KFB_PREVIEW_CREDENTIAL' gateway/worker.production.mjs; then exit 1; fi
+          grep -Fq 'legacy-preview.json' gateway/build-production.mjs
+          grep -Fq 'privacy !== "public_safe"' gateway/verify-production.mjs
+          grep -Fq 'contents: read' .github/workflows/deploy-production.yml
 
       - name: Verify privacy guardrails
         shell: bash
