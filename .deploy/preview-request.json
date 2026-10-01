@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-preview-security-20261001-0942",
-  "reason": "Disarmed after successful hardened private preview deployment."
+  "deploy": true,
+  "request_id": "kfb-activities-youtube-annual-20261001",
+  "reason": "Deploy YouTube embed referrer fix, dark-section contrast fix, and annual financial report pages from current Drive source."
 }
