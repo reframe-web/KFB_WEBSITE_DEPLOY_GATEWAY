@@ -73,6 +73,18 @@ function removeAnnualSection(html) {
   );
 }
 
+function addPrivacyLink(html, lang) {
+  const marker = lang === "en" ? "<strong>Information</strong>" : "<strong>情報</strong>";
+  const href = lang === "en" ? "/en/privacy/" : "/ja/privacy/";
+  const label = lang === "en" ? "Privacy" : "プライバシー";
+  if (html.includes(`href="${href}"`)) return html;
+  const start = html.lastIndexOf(`<div class="footer-links">${marker}`);
+  if (start < 0) return html;
+  const end = html.indexOf("</div>", start);
+  if (end < 0) return html;
+  return html.slice(0, end) + `<a href="${href}">${label}</a>` + html.slice(end);
+}
+
 function publicizeHtml(input) {
   let html = String(input);
 
@@ -178,7 +190,8 @@ async function publicSitemap(request, env) {
     "/ja/what-we-do/", "/en/what-we-do/",
     "/ja/activities/", "/en/activities/",
     "/ja/support/", "/en/support/",
-    "/ja/contact/", "/en/contact/"
+    "/ja/contact/", "/en/contact/",
+    "/ja/privacy/", "/en/privacy/"
   ];
 
   const dataUrl = new URL("/data/content-index.json", request.url);
