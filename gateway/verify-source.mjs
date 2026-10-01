@@ -11,7 +11,10 @@ const required = [
   "ja/index.html",
   "en/index.html",
   "assets/css/site.css",
+  "assets/css/site-v4.css",
   "assets/js/site.js",
+  "assets/js/content-feed.js",
+  "data/content-index.json",
 ];
 
 const textExtensions = new Set([
@@ -96,5 +99,40 @@ for (let i = 0; i < files.length; i += 1) {
 }
 
 if (htmlCount < 3) throw new Error("Expected at least the root, Japanese, and English HTML documents.");
+
+const contentIndexPath = join(root, "data", "content-index.json");
+const contentIndex = JSON.parse(await readFile(contentIndexPath, "utf8"));
+const allowedContentTypes = new Set(["activity_report", "youtube_report", "news", "event", "blog"]);
+const allowedStatuses = new Set(["published"]);
+const allowedPrivacy = new Set(["public_safe"]);
+
+if (contentIndex.schema !== 1 || !Array.isArray(contentIndex.items)) {
+  throw new Error("Unified KFB content index must use schema 1 with an items array.");
+}
+
+const ids = new Set();
+for (const item of contentIndex.items) {
+  if (!item || typeof item !== "object") throw new Error("Invalid unified-content item.");
+  if (!item.id || ids.has(item.id)) throw new Error(`Missing or duplicate unified-content id: ${item.id ?? "(missing)"}`);
+  ids.add(item.id);
+  if (!allowedContentTypes.has(item.type)) throw new Error(`Unsupported unified-content type: ${item.type}`);
+  if (!allowedStatuses.has(item.status)) throw new Error(`Non-published item must not be in deployable content index: ${item.id}`);
+  if (!allowedPrivacy.has(item.privacy)) throw new Error(`Unsafe privacy state in deployable content index: ${item.id}`);
+  if (!item.title_ja || !item.url_ja || !Array.isArray(item.tags)) throw new Error(`Incomplete unified-content item: ${item.id}`);
+  if (item.published_at !== null && item.published_at !== undefined && !/^\d{4}-\d{2}-\d{2}$/u.test(item.published_at)) {
+    throw new Error(`Invalid published_at in unified-content item: ${item.id}`);
+  }
+
+  for (const [label, url] of [["ja", item.url_ja], ["en", item.url_en]]) {
+    if (!url) continue;
+    if (!/^\/(?:ja|en)\/activities\/[A-Za-z0-9._-]+\/$/u.test(url)) {
+      throw new Error(`Unsafe ${label} unified-content URL in ${item.id}: ${url}`);
+    }
+    const target = join(root, ...url.replace(/^\//u, "").split("/").filter(Boolean), "index.html");
+    if (!(await exists(target))) throw new Error(`Unified-content URL has no HTML page: ${url}`);
+  }
+}
+
+console.log(`KFB unified content index passed: ${contentIndex.items.length} published items.`);
 
 console.log(`KFB source validation passed: ${files.length} files, ${htmlCount} HTML documents.`);
