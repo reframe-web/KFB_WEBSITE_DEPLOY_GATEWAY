@@ -2,7 +2,18 @@
   "name": "kfb-preview",
   "main": "worker.mjs",
   "compatibility_date": "2026-09-30",
+  "workers_dev": true,
   "preview_urls": false,
+  "routes": [
+    {
+      "pattern": "kfbokinawa.org",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.kfbokinawa.org",
+      "custom_domain": true
+    }
+  ],
   "assets": {
     "directory": "../.runtime-site",
     "binding": "ASSETS",
