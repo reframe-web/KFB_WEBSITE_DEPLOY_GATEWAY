@@ -157,41 +157,20 @@ jobs:
           fi
           grep -Fiq "x-robots-tag: noindex, nofollow, noarchive" "$RUNNER_TEMP/private.headers"
 
-          public_origin="https://kfbokinawa.org"
-          public_code="$(curl -sS -L --max-redirs 2 -o "$RUNNER_TEMP/public-home.html" -D "$RUNNER_TEMP/public.headers" -w '%{http_code}' "$public_origin/ja/")"
-          test "$public_code" = "200"
-          ! grep -Fiq "x-robots-tag: noindex" "$RUNNER_TEMP/public.headers"
-          ! grep -Fiq 'content="noindex' "$RUNNER_TEMP/public-home.html"
-          ! grep -Fq "公開前プレビュー" "$RUNNER_TEMP/public-home.html"
-          grep -Fq "info@kfbokinawa.org" "$RUNNER_TEMP/public-home.html"
+          canonical_origin="https://kfbokinawa.org"
 
-          public_en_code="$(curl -sS -L --max-redirs 2 -o "$RUNNER_TEMP/public-en.html" -w '%{http_code}' "$public_origin/en/")"
-          test "$public_en_code" = "200"
-          ! grep -Fq "Private pre-release preview" "$RUNNER_TEMP/public-en.html"
+          canonical_robots_code="$(curl -sS -o "$RUNNER_TEMP/canonical-robots.txt" -D "$RUNNER_TEMP/canonical-robots.headers" -w '%{http_code}' "$canonical_origin/robots.txt")"
+          test "$canonical_robots_code" = "200"
+          grep -Fq "Disallow: /" "$RUNNER_TEMP/canonical-robots.txt"
+          grep -Fiq "x-robots-tag: noindex, nofollow, noarchive" "$RUNNER_TEMP/canonical-robots.headers"
 
-          privacy_code="$(curl -sS -L --max-redirs 2 -o "$RUNNER_TEMP/privacy.html" -w '%{http_code}' "$public_origin/ja/privacy/")"
-          test "$privacy_code" = "200"
-
-          robots_code="$(curl -sS -o "$RUNNER_TEMP/public-robots.txt" -w '%{http_code}' "$public_origin/robots.txt")"
-          test "$robots_code" = "200"
-          grep -Fq "Allow: /" "$RUNNER_TEMP/public-robots.txt"
-          grep -Fq "Sitemap: https://kfbokinawa.org/sitemap.xml" "$RUNNER_TEMP/public-robots.txt"
-
-          sitemap_code="$(curl -sS -o "$RUNNER_TEMP/public-sitemap.xml" -w '%{http_code}' "$public_origin/sitemap.xml")"
-          test "$sitemap_code" = "200"
-          grep -Fq "https://kfbokinawa.org/ja/" "$RUNNER_TEMP/public-sitemap.xml"
-          grep -Fq "https://kfbokinawa.org/en/" "$RUNNER_TEMP/public-sitemap.xml"
-          ! grep -Fq "/activities/archive/" "$RUNNER_TEMP/public-sitemap.xml"
-
-          legacy_code="$(curl -sS -o /dev/null -w '%{http_code}' "$public_origin/ja/activities/archive/legacy-tsukutsuku-8692/")"
-          test "$legacy_code" = "404"
-          legacy_data_code="$(curl -sS -o /dev/null -w '%{http_code}' "$public_origin/data/legacy-preview.json")"
-          test "$legacy_data_code" = "404"
-
-          support_code="$(curl -sS -L --max-redirs 2 -o "$RUNNER_TEMP/support.html" -w '%{http_code}' "$public_origin/ja/support/")"
-          test "$support_code" = "200"
-          ! grep -Fq "公開前にKFB側の最終確認" "$RUNNER_TEMP/support.html"
-          ! grep -Fq "非公開プレビュー" "$RUNNER_TEMP/support.html"
+          canonical_code="$(curl -sS -o "$RUNNER_TEMP/canonical-home.txt" -D "$RUNNER_TEMP/canonical-home.headers" -w '%{http_code}' "$canonical_origin/ja/")"
+          if [ "$canonical_code" != "401" ] && [ "$canonical_code" != "503" ]; then
+            echo "Canonical KFB domain unexpectedly returned HTTP $canonical_code without credentials." >&2
+            exit 1
+          fi
+          grep -Fiq 'www-authenticate: Basic realm="KFB Private Preview"' "$RUNNER_TEMP/canonical-home.headers"
+          grep -Fiq "x-robots-tag: noindex, nofollow, noarchive" "$RUNNER_TEMP/canonical-home.headers"
 
           www_code="$(curl -sS -o /dev/null -D "$RUNNER_TEMP/www.headers" -w '%{http_code}' --max-time 20 "https://www.kfbokinawa.org/ja/" || true)"
           if [ "$www_code" = "301" ] || [ "$www_code" = "308" ]; then
@@ -211,9 +190,9 @@ jobs:
             echo "- Canonical source: Google Drive / KFB WEBSITE DEV / 40_SITE / SOURCE"
             echo "- Drive source fingerprint: ${{ steps.snapshot.outputs.source_fingerprint }}"
             echo "- Worker: kfb-preview"
-            echo "- Public production domain: https://kfbokinawa.org/"
-            echo "- Authentication policy: workers.dev preview remains private; canonical domain is public"
-            echo "- Search policy: canonical domain indexable; preview host remains noindex"
+            echo "- Canonical review domain: https://kfbokinawa.org/"
+            echo "- Authentication policy: canonical and workers.dev hosts both require the existing review credential"
+            echo "- Search policy: canonical and workers.dev hosts are both noindex and crawler-blocked"
             echo "- Request ID: ${{ steps.request.outputs.request_id }}"
             echo "- Reason: ${{ steps.request.outputs.reason }}"
             if [ -n "${{ steps.deploy.outputs.preview_origin }}" ]; then
