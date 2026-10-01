@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-activities-youtube-annual-20261001",
-  "reason": "Deploy YouTube embed referrer fix, dark-section contrast fix, and annual financial report pages from current Drive source."
+  "reason": "Disarmed after successful activities, annual-report and YouTube-fix preview deployment."
 }
