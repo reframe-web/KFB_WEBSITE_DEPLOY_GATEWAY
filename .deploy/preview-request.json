@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-public-launch-clean-20261001-1727",
-  "reason": "Clean final public launch redeploy using the proven Worker configuration after the scoped Cloudflare token could not add the optional www custom domain."
+  "reason": "Disarmed after successful public launch of kfbokinawa.org. The workers.dev review preview remains authenticated/noindex; www.kfbokinawa.org remains a separate DNS/custom-domain follow-up because the scoped Cloudflare token cannot create that route."
 }
