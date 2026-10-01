@@ -2,6 +2,7 @@
   "name": "kfb-preview",
   "main": "worker.mjs",
   "compatibility_date": "2026-09-30",
+  "preview_urls": false,
   "assets": {
     "directory": "../.runtime-site",
     "binding": "ASSETS",
