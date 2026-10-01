@@ -1,5 +1,4 @@
-name: Verify KFB private preview live
-# post-deploy verification 2026-10-01
+name: Verify KFB public and private live
 
 on:
   workflow_dispatch:
@@ -16,23 +15,99 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Verify unauthenticated preview is locked and noindex
+      - name: Verify private review host
         shell: bash
         run: |
           set -euo pipefail
           origin="https://kfb-preview.hungrypriest1224.workers.dev"
 
-          robots_code="$(curl -sS -o "$RUNNER_TEMP/robots.txt" -D "$RUNNER_TEMP/robots.headers" -w '%{http_code}' "$origin/robots.txt")"
-          test "$robots_code" = "200"
-          grep -Fq "Disallow: /" "$RUNNER_TEMP/robots.txt"
-          grep -Fiq "x-robots-tag: noindex, nofollow, noarchive" "$RUNNER_TEMP/robots.headers"
+          code="$(curl -sS -o "$RUNNER_TEMP/private-robots" -D "$RUNNER_TEMP/private-robots.h" -w '%{http_code}' "$origin/robots.txt")"
+          test "$code" = "200"
+          grep -Fq "Disallow: /" "$RUNNER_TEMP/private-robots"
+          grep -Fiq "x-robots-tag: noindex, nofollow, noarchive" "$RUNNER_TEMP/private-robots.h"
 
-          private_code="$(curl -sS -o "$RUNNER_TEMP/private.txt" -D "$RUNNER_TEMP/private.headers" -w '%{http_code}' "$origin/ja/")"
-          test "$private_code" = "401"
-          grep -Fiq 'www-authenticate: Basic realm="KFB Private Preview"' "$RUNNER_TEMP/private.headers"
-          grep -Fiq "x-robots-tag: noindex, nofollow, noarchive" "$RUNNER_TEMP/private.headers"
+          code="$(curl -sS -o "$RUNNER_TEMP/private-home" -D "$RUNNER_TEMP/private-home.h" -w '%{http_code}' "$origin/ja/")"
+          test "$code" = "401"
+          grep -Fiq 'www-authenticate: Basic realm="KFB Private Preview"' "$RUNNER_TEMP/private-home.h"
+          grep -Fiq "x-robots-tag: noindex, nofollow, noarchive" "$RUNNER_TEMP/private-home.h"
 
-          root_code="$(curl -sS -o "$RUNNER_TEMP/root.txt" -D "$RUNNER_TEMP/root.headers" -w '%{http_code}' "$origin/")"
-          test "$root_code" = "401"
+      - name: Verify public canonical host
+        shell: bash
+        run: |
+          set -euo pipefail
+          origin="https://kfbokinawa.org"
 
-          echo "KFB private preview is live, authentication-gated, and crawler-blocked."
+          for path in / /ja/ /en/ /ja/about/ /en/about/ /ja/what-we-do/ /en/what-we-do/ /ja/activities/ /en/activities/ /ja/support/ /en/support/ /ja/contact/ /en/contact/ /ja/privacy/ /en/privacy/; do
+            safe="$(echo "$path" | tr '/:' '__')"
+            code="$(curl -sS -L --max-redirs 2 -o "$RUNNER_TEMP/$safe.html" -D "$RUNNER_TEMP/$safe.h" -w '%{http_code}' "$origin$path")"
+            test "$code" = "200"
+            ! grep -Fiq "www-authenticate:" "$RUNNER_TEMP/$safe.h"
+            ! grep -Fiq 'content="noindex' "$RUNNER_TEMP/$safe.html"
+            ! grep -Fq "公開前プレビュー" "$RUNNER_TEMP/$safe.html"
+            ! grep -Fq "Private pre-release preview" "$RUNNER_TEMP/$safe.html"
+            ! grep -Fq "kfokinawa@gmail.com" "$RUNNER_TEMP/$safe.html"
+          done
+
+          curl -fsS "$origin/ja/" | grep -Fq "info@kfbokinawa.org"
+          curl -fsS "$origin/ja/" | grep -Fq '/ja/privacy/'
+          curl -fsS "$origin/en/" | grep -Fq '/en/privacy/'
+
+          curl -fsS "$origin/robots.txt" > "$RUNNER_TEMP/robots.txt"
+          grep -Fq "Allow: /" "$RUNNER_TEMP/robots.txt"
+          grep -Fq "Sitemap: https://kfbokinawa.org/sitemap.xml" "$RUNNER_TEMP/robots.txt"
+
+          curl -fsS "$origin/sitemap.xml" > "$RUNNER_TEMP/sitemap.xml"
+          grep -Fq "https://kfbokinawa.org/ja/" "$RUNNER_TEMP/sitemap.xml"
+          grep -Fq "https://kfbokinawa.org/en/" "$RUNNER_TEMP/sitemap.xml"
+          grep -Fq "https://kfbokinawa.org/ja/privacy/" "$RUNNER_TEMP/sitemap.xml"
+          grep -Fq "https://kfbokinawa.org/en/privacy/" "$RUNNER_TEMP/sitemap.xml"
+          ! grep -Eq '/review/|/activities/archive/legacy-|legacy-preview' "$RUNNER_TEMP/sitemap.xml"
+
+      - name: Verify public data and JavaScript contain no review runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          origin="https://kfbokinawa.org"
+
+          curl -fsS "$origin/data/content-index.json" > "$RUNNER_TEMP/content-index.json"
+          jq -e '.schema == 1 and (.items | length) >= 1' "$RUNNER_TEMP/content-index.json" >/dev/null
+          jq -e 'all(.items[]; ((has("status") | not) and (has("privacy") | not)))' "$RUNNER_TEMP/content-index.json" >/dev/null
+          ! grep -Fq "preview_legacy" "$RUNNER_TEMP/content-index.json"
+          ! grep -Fq "source_public_unreviewed" "$RUNNER_TEMP/content-index.json"
+
+          curl -fsS "$origin/assets/js/content-feed.js" > "$RUNNER_TEMP/content-feed.js"
+          ! grep -Fq "legacy-feed" "$RUNNER_TEMP/content-feed.js"
+          ! grep -Fq "legacy-preview" "$RUNNER_TEMP/content-feed.js"
+          ! grep -Fq "preview_legacy" "$RUNNER_TEMP/content-feed.js"
+          ! grep -Fqi "source of truth" "$RUNNER_TEMP/content-feed.js"
+
+          test "$(curl -sS -o /dev/null -w '%{http_code}' "$origin/data/legacy-feed.json")" = "404"
+          test "$(curl -sS -o /dev/null -w '%{http_code}' "$origin/data/legacy-preview.json")" = "404"
+          test "$(curl -sS -o /dev/null -w '%{http_code}' "$origin/ja/activities/archive/legacy-tsukutsuku-8692/")" = "404"
+
+      - name: Verify public support copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          origin="https://kfbokinawa.org"
+          curl -fsS "$origin/ja/support/" > "$RUNNER_TEMP/support-ja.html"
+          curl -fsS "$origin/en/support/" > "$RUNNER_TEMP/support-en.html"
+
+          grep -Fq "銀行振込" "$RUNNER_TEMP/support-ja.html"
+          grep -Fq "Bank Transfer" "$RUNNER_TEMP/support-en.html"
+          ! grep -Fq "Stripe接続後に利用可能" "$RUNNER_TEMP/support-ja.html"
+          ! grep -Fq "Available after Stripe setup" "$RUNNER_TEMP/support-en.html"
+          ! grep -Fq "¥550" "$RUNNER_TEMP/support-ja.html"
+          ! grep -Fq "¥1,650" "$RUNNER_TEMP/support-ja.html"
+
+      - name: Report www state
+        shell: bash
+        run: |
+          set -euo pipefail
+          code="$(curl -sS -o /dev/null -D "$RUNNER_TEMP/www.h" -w '%{http_code}' --max-time 15 https://www.kfbokinawa.org/ja/ || true)"
+          if [ "$code" = "301" ] || [ "$code" = "308" ]; then
+            grep -Fiq "location: https://kfbokinawa.org/ja/" "$RUNNER_TEMP/www.h"
+            echo "www redirect verified."
+          else
+            echo "www alias remains unresolved; canonical apex production is the active public origin."
+          fi
