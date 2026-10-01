@@ -90,6 +90,14 @@ for (let i = 0; i < files.length; i += 1) {
     }
   }
 
+  if (extension === ".js") {
+    try {
+      new Function(body);
+    } catch (error) {
+      throw new Error(`Classic JavaScript syntax error in ${rel}: ${error.message}`);
+    }
+  }
+
   if (extension === ".html" || extension === ".htm") {
     htmlCount += 1;
     if (!/<html\b/iu.test(body) || !/<title>[^<]+<\/title>/iu.test(body)) {
