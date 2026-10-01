@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-public-launch-clean-20261001-1727",
-  "reason": "Disarmed after successful public launch of kfbokinawa.org. The workers.dev review preview remains authenticated/noindex; www.kfbokinawa.org remains a separate DNS/custom-domain follow-up because the scoped Cloudflare token cannot create that route."
+  "deploy": true,
+  "request_id": "kfb-public-safe-runtime-20261001-1732",
+  "reason": "Deploy the final public-safe activity feed runtime so the canonical host exposes only published content data and no private review-feed logic."
 }
