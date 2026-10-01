@@ -135,12 +135,12 @@ function publicizeHtml(input) {
       "Bank-transfer fees, if any, depend on your bank."
     );
 
-  if (html.includes('Stripe接続後に利用可能')) {
+  if (/<html\s+lang="ja"/iu.test(html) && html.includes('support-plans')) {
     html = html.replace(
       /<div class="support-plans">[\s\S]*?<\/div>\s*<div class="preview-note">/iu,
       '<div class="info-card"><h3>現在ご利用いただける支援方法</h3><p>銀行振込をご利用いただけます。企業・団体からのご支援やボランティアについてもお問い合わせください。</p></div><div class="preview-note">'
     );
-  } else if (html.includes('Available after Stripe setup')) {
+  } else if (/<html\s+lang="en"/iu.test(html) && html.includes('support-plans')) {
     html = html.replace(
       /<div class="support-plans">[\s\S]*?<\/div>\s*<div class="preview-note">/iu,
       '<div class="info-card"><h3>Ways to support KFB now</h3><p>Domestic bank transfer is currently available. Companies, organizations and prospective volunteers are also welcome to contact KFB.</p></div><div class="preview-note">'
