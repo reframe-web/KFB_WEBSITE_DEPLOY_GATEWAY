@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-preview-refresh-20261001b",
-  "reason": "Disarmed after deployment attempt; waiting for Cloudflare token metadata read permission."
+  "deploy": true,
+  "request_id": "kfb-preview-refresh-20261001-0938",
+  "reason": "Refresh private preview after Cloudflare token metadata permission update."
 }
