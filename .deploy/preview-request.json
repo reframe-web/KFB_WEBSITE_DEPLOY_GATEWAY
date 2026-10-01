@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-auth-gate-verify-20261001-1840",
-  "reason": "Re-deploy and verify the canonical KFB domain with the existing authentication gate and crawler blocking."
+  "reason": "Disarmed after successful verification of the canonical KFB domain with the existing authentication gate, noindex and crawler blocking. The www redirect remains active."
 }
