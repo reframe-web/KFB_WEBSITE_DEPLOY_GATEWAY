@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-legacy-normal-site-migration-20261001",
-  "reason": "Deploy all legacy content into the normal protected Activities site flow; client decides page-specific edits/deletions after review."
+  "reason": "Disarmed after successful legacy migration into the normal protected KFB site flow."
 }
