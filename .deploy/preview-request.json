@@ -1,6 +1,6 @@
 {
   "schema": 1,
   "deploy": true,
-  "request_id": "kfb-unified-content-feed-20261001",
-  "reason": "Deploy unified activity/news/blog feed, automatic home latest cards, YouTube detail page, and content classification foundation from Drive."
+  "request_id": "kfb-unified-feed-retry-20261001",
+  "reason": "Retry unified KFB content feed after BOM-safe validation; source is now stable."
 }
