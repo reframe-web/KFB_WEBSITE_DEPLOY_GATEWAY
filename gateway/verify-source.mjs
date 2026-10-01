@@ -144,4 +144,42 @@ for (const item of contentIndex.items) {
 
 console.log(`KFB unified content index passed: ${contentIndex.items.length} published items.`);
 
-console.log(`KFB source validation passed: ${files.length} files, ${htmlCount} HTML documents.`);
+const legacyPreviewPath = join(root, "data", "legacy-preview.json");
+if (await exists(legacyPreviewPath)) {
+  const legacyText = await readFile(legacyPreviewPath, "utf8");
+  const legacy = JSON.parse(legacyText.charCodeAt(0) === 0xFEFF ? legacyText.slice(1) : legacyText);
+  if (!legacy || !Array.isArray(legacy.items)) {
+    throw new Error("legacy-preview.json must contain an items array.");
+  }
+
+  let generatedArchiveItems = 0;
+  for (const item of legacy.items) {
+    if (!item || typeof item !== "object" || !item.id) {
+      throw new Error("Invalid legacy archive item.");
+    }
+    if (item.represented_by_existing) continue;
+
+    if (!item.title_ja || !item.title_en || !item.excerpt_ja || !item.excerpt_en) {
+      throw new Error(`Legacy archive item is missing bilingual title/excerpt: ${item.id}`);
+    }
+    if (item.body_html && !item.body_en) {
+      throw new Error(`Legacy archive item has Japanese body but no English body: ${item.id}`);
+    }
+
+    for (const lang of ["ja", "en"]) {
+      const expectedUrl = `/${lang}/activities/archive/${item.id}/`;
+      if (item[`url_${lang}`] !== expectedUrl) {
+        throw new Error(`Legacy archive URL mismatch for ${item.id} (${lang}): ${item[`url_${lang}`] ?? "(missing)"}`);
+      }
+      const target = join(root, ...expectedUrl.replace(/^\//u, "").split("/").filter(Boolean), "index.html");
+      if (!(await exists(target))) {
+        throw new Error(`Generated legacy archive page is missing: ${expectedUrl}`);
+      }
+    }
+    generatedArchiveItems += 1;
+  }
+
+  console.log(`KFB bilingual legacy archive passed: ${generatedArchiveItems} translated archive items / ${generatedArchiveItems * 2} generated language pages.`);
+}
+
+console.log(`KFB source validation passed: ${files.length} source files, ${htmlCount} source HTML documents before generated archive counting.`);
