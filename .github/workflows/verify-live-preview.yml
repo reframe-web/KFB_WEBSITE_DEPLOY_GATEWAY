@@ -1,4 +1,5 @@
 name: Verify KFB private preview live
+# post-deploy verification 2026-10-01
 
 on:
   workflow_dispatch:
