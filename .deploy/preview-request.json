@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-support-grid-20261003-0139",
-  "reason": "Disarmed after successful responsive support-grid deployment."
+  "deploy": true,
+  "request_id": "kfb-support-ticket-copy-20261003-0630",
+  "reason": "Publish finalized eight-ticket Canva-aligned support artwork with normalized child-photo appearance, unique donor-centered copy, and synchronized JA/EN support-card text."
 }
