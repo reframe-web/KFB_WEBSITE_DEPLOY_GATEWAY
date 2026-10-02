@@ -77,6 +77,11 @@ jobs:
         shell: bash
         run: node gateway/build-production.mjs "$SNAPSHOT_DIR"
 
+      - name: Enforce public-copy hygiene
+        if: steps.request.outputs.armed == 'true'
+        shell: bash
+        run: node gateway/enforce-public-copy.mjs "$SNAPSHOT_DIR"
+
       - name: Validate public snapshot
         if: steps.request.outputs.armed == 'true'
         shell: bash
