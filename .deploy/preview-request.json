@@ -1,6 +1,6 @@
 {
   "schema": 1,
   "deploy": true,
-  "request_id": "kfb-public-copy-hygiene-20261002-1632",
-  "reason": "Remove visitor-visible internal development/test/preview notes and enforce permanent public-copy hygiene while preserving authentication and noindex."
+  "request_id": "kfb-public-copy-hygiene-full-20261002-1650",
+  "reason": "Redeploy with expanded public-copy hygiene for support, activity, annual-report, about, what-we-do and video pages while preserving auth/noindex."
 }
