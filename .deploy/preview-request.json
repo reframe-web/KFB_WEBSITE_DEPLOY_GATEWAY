@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-stripe-sandbox-20261002-1615",
-  "reason": "Disarmed after successful Stripe Sandbox checkout-link deployment. Protected canonical-domain auth and noindex policy remain unchanged."
+  "deploy": true,
+  "request_id": "kfb-public-copy-hygiene-20261002-1632",
+  "reason": "Remove visitor-visible internal development/test/preview notes and enforce permanent public-copy hygiene while preserving authentication and noindex."
 }
