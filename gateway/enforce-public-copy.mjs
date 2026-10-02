@@ -65,6 +65,17 @@ const pathReplacements = {
   "en/what-we-do/index.html": [
     ['Specific programs and schedules can change, so this page does not imply that every past activity is always available.', 'Programs and schedules vary over time.'],
   ],
+  "ja/activities/index.html": [
+    ['「種類」は記事の役割、「テーマ」は記事の内容を表します。新しい記事を追加すると、この一覧とTOPの新着が同じ正本から更新されます。', '「種類」は記事の役割、「テーマ」は記事の内容を表します。'],
+    ['<span class="status-pill">会計画像確認中</span><h3>2024年度</h3><p>フードドライブやふるさと納税などの活動記録と、2025年3月20日掲載の会計報告を整理しています。</p>', '<span class="status-pill">活動・会計報告</span><h3>2024年度</h3><p>フードドライブやふるさと納税など、2024年度の活動記録をご覧いただけます。</p>'],
+    ['<p class="small-print">会計数値は保存済みの公式原本から確認できたものだけを掲載しています。2024年度の会計表は画像原本を再確認中です。</p>', ''],
+  ],
+  "en/activities/index.html": [
+    ['Saved records from the previous websites are being checked and organized by year. Figures will be published only from source documents.', 'Explore KFB’s annual activity and financial records by year.'],
+    ['<span class="status-pill">Financial image under review</span><h3>FY2024</h3><p>Activity records are available; the financial report article is preserved while its accounting-table image source is being re-verified.</p>', '<span class="status-pill">Activity & financial report</span><h3>FY2024</h3><p>Explore FY2024 activity records including food-drive and hometown-tax support updates.</p>'],
+    ['<span class="status-pill">Source verified</span>', '<span class="status-pill">Activity & financial report</span>'],
+    ['<p class="small-print">Financial figures are published only when confirmed in archived official source records. FY2024 accounting-table images are still being re-verified.</p>', ''],
+  ],
   "ja/activities/video-rkbNbDKpgZA/index.html": [
     ['<div class="content-note">この動画の公開日は、現在保存している原本だけでは確定できないため、推測して掲載していません。</div>', ''],
   ],
@@ -112,6 +123,13 @@ const forbidden = [
   "cannot yet be confirmed from the preserved source material",
   "Under review</strong><span>Financial-table image source",
   "No unreported balance or other figures have been inferred.",
+  "同じ正本から更新されます",
+  "会計画像確認中",
+  "画像原本を再確認中",
+  "Saved records from the previous websites are being checked and organized by year",
+  "Financial image under review",
+  "Source verified",
+  "being re-verified",
 ];
 
 let changedFiles = 0;
