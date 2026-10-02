@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-source-tree-cleanup-20261001-1927",
-  "reason": "Disarmed after successful canonical Drive source-tree cleanup deployment. Auth gate, noindex and www redirect remain unchanged."
+  "deploy": true,
+  "request_id": "kfb-support-eight-plans-20261002-1029",
+  "reason": "Deploy provisional support-page alignment to the eight Tsuku2 plan amounts while preserving auth gate and noindex."
 }
