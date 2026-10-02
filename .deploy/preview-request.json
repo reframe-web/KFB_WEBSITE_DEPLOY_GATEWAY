@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-support-ticket-canva-20261003-0125",
-  "reason": "Disarmed after successful deployment of finalized KFB support-ticket imagery and card styling."
+  "deploy": true,
+  "request_id": "kfb-support-grid-20261003-0139",
+  "reason": "Improve KFB support-page readability: 4-column desktop ticket grid, 2-column tablet grid, 1-column mobile grid, and tighter support-group headings."
 }
