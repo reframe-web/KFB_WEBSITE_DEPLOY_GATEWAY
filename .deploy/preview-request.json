@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-public-copy-hygiene-full-20261002-1650",
-  "reason": "Redeploy with expanded public-copy hygiene for support, activity, annual-report, about, what-we-do and video pages while preserving auth/noindex."
+  "reason": "Disarmed after successful site-wide public-copy hygiene deployment. Authentication/noindex remain unchanged."
 }
