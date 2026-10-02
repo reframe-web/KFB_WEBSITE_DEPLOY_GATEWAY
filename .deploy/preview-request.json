@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-support-eight-plans-20261002-1029",
-  "reason": "Disarmed after successful deployment of the provisional eight-plan support page. Auth gate, noindex and www redirect remain unchanged."
+  "deploy": true,
+  "request_id": "kfb-stripe-sandbox-20261002-1615",
+  "reason": "Deploy Stripe Sandbox Payment Links to the password-protected canonical KFB review site for end-to-end checkout testing."
 }
