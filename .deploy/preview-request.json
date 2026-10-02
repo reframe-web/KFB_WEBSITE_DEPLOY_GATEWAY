@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-stripe-sandbox-20261002-1615",
-  "reason": "Deploy Stripe Sandbox Payment Links to the password-protected canonical KFB review site for end-to-end checkout testing."
+  "reason": "Disarmed after successful Stripe Sandbox checkout-link deployment. Protected canonical-domain auth and noindex policy remain unchanged."
 }
