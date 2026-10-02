@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-public-copy-hygiene-full-20261002-1650",
-  "reason": "Disarmed after successful site-wide public-copy hygiene deployment. Authentication/noindex remain unchanged."
+  "deploy": true,
+  "request_id": "kfb-support-ticket-canva-20261003-0125",
+  "reason": "Deploy finalized KFB support-ticket imagery and updated support-card styling from Google Drive canonical source to the password-protected canonical site."
 }
