@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-support-grid-20261003-0139",
-  "reason": "Improve KFB support-page readability: 4-column desktop ticket grid, 2-column tablet grid, 1-column mobile grid, and tighter support-group headings."
+  "reason": "Disarmed after successful responsive support-grid deployment."
 }
