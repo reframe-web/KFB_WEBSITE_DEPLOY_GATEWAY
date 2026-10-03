@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
 const rootArg = process.argv[2];
@@ -81,14 +81,8 @@ function pageHtml(item, lang) {
   const home = isEn ? "Home" : "ホーム";
   const reports = isEn ? "Impact & Reports" : "活動・実績";
   const loadingFallback = isEn
-    ? "The preserved source does not contain usable body text."
-    : "保存原本から利用できる本文を確認できませんでした。";
-  const archiveNote = isEn
-    ? '<div class="legacy-language-note"><strong>English archive translation</strong><br>This page is an English translation of a KFB activity record originally published in Japanese. It remains part of the protected migration review until its final publication status is confirmed.</div>'
-    : '<div class="legacy-language-note"><strong>旧サイト移行記録</strong><br>このページは旧サイトから保全した活動記録です。最終的な公開可否は移行レビューで確認します。</div>';
-  const sourceBox = item.source_url
-    ? `<div class="legacy-source"><strong>${isEn ? "Original legacy page" : "旧サイト原文"}</strong><p>${isEn ? "Open the source page preserved from the previous website." : "移行内容との照合用に、旧サイト側の原文も確認できます。"}</p><a href="${esc(item.source_url)}" target="_blank" rel="noopener">${isEn ? "Open original page ↗" : "元ページを開く ↗"}</a></div>`
-    : "";
+    ? "Detailed text is not available for this activity record."
+    : "この活動記録には本文がありません。";
   const ld = publicSafe ? `<script type="application/ld+json">${JSON.stringify({
     "@context": "https://schema.org",
     "@type": item.type === "news" ? "NewsArticle" : "Article",
@@ -115,18 +109,61 @@ function pageHtml(item, lang) {
 </head><body>
 <a class="skip-link" href="#main">${isEn ? "Skip to content" : "本文へ移動"}</a>
 <header class="site-header"><div class="shell header-inner"><a class="brand" href="/${lang}/"><img class="brand-logo" src="/assets/images/kfb-mark.webp" width="300" height="300" alt=""><span class="brand-name">${esc(brandName)}</span></a><button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="primary-nav" aria-label="${isEn ? "Open menu" : "メニューを開く"}">☰</button><nav class="nav" id="primary-nav" data-nav>${nav}<a class="nav-lang" href="${esc(altUrl)}">${langName}</a></nav></div></header>
-<main id="main"><article class="legacy-article"><div class="legacy-hero"><nav class="breadcrumb"><a href="/${lang}/">${home}</a><span>/</span><a href="/${lang}/activities/">${reports}</a><span>/</span><span>${isEn ? "Archive" : "活動記録"}</span></nav><div class="eyebrow">${esc(label)}</div><h1>${esc(title)}</h1><div class="legacy-meta">${date ? `<time datetime="${esc(item.published_at)}">${esc(date)}</time>` : ""}<span>${isEn ? "KFB legacy archive" : "旧サイト移行記事"}</span></div></div>
-${archiveNote}
+<main id="main"><article class="legacy-article"><div class="legacy-hero"><nav class="breadcrumb"><a href="/${lang}/">${home}</a><span>/</span><a href="/${lang}/activities/">${reports}</a><span>/</span><span>${isEn ? "Archive" : "活動記録"}</span></nav><div class="eyebrow">${esc(label)}</div><h1>${esc(title)}</h1><div class="legacy-meta">${date ? `<time datetime="${esc(item.published_at)}">${esc(date)}</time>` : ""}<span>${isEn ? "Activity archive" : "活動アーカイブ"}</span></div></div>
 <div class="legacy-body">${bodyHasText ? body : `<p>${esc(excerpt || loadingFallback)}</p>`}</div>
-${sourceBox}
 </article></main>
-<footer class="footer"><div class="shell"><div class="footer-grid"><div><a class="brand" href="/${lang}/"><img class="brand-logo" src="/assets/images/kfb-mark.webp" width="300" height="300" alt=""><span class="brand-name">${esc(brandName)}</span></a><p>${isEn ? "Supporting children and families in Okinawa, Japan." : "沖縄で子どもと家庭を支える活動を行っています。"}</p></div><div class="footer-links"><strong>${isEn ? "Site" : "サイト"}</strong><a href="/${lang}/about/">${isEn ? "About KFB" : "KFBについて"}</a><a href="/${lang}/what-we-do/">${isEn ? "What We Do" : "活動内容"}</a><a href="/${lang}/activities/">${reports}</a><a href="/${lang}/support/">${isEn ? "Support Us" : "支援する"}</a></div><div class="footer-links"><strong>${isEn ? "Information" : "情報"}</strong><a href="/${lang}/contact/">${isEn ? "Contact" : "お問い合わせ"}</a><a href="${esc(altUrl)}">${langName}</a></div></div><div class="footer-bottom"><small>© Kodomo Food Bank KFB</small><small>${isEn ? "Private pre-release preview" : "公開前プレビュー"}</small></div></div></footer>
+<footer class="footer"><div class="shell"><div class="footer-grid"><div><a class="brand" href="/${lang}/"><img class="brand-logo" src="/assets/images/kfb-mark.webp" width="300" height="300" alt=""><span class="brand-name">${esc(brandName)}</span></a><p>${isEn ? "Supporting children and families in Okinawa, Japan." : "沖縄で子どもと家庭を支える活動を行っています。"}</p></div><div class="footer-links"><strong>${isEn ? "Site" : "サイト"}</strong><a href="/${lang}/about/">${isEn ? "About KFB" : "KFBについて"}</a><a href="/${lang}/what-we-do/">${isEn ? "What We Do" : "活動内容"}</a><a href="/${lang}/activities/">${reports}</a><a href="/${lang}/support/">${isEn ? "Support Us" : "支援する"}</a></div><div class="footer-links"><strong>${isEn ? "Information" : "情報"}</strong><a href="/${lang}/contact/">${isEn ? "Contact" : "お問い合わせ"}</a><a href="${esc(altUrl)}">${langName}</a></div></div><div class="footer-bottom"><small>© Kodomo Food Bank KFB</small></div></div></footer>
 </body></html>`;
 }
 
 const legacyPath = join(root, "data", "legacy-preview.json");
 const legacy = await readJson(legacyPath);
 if (!legacy || !Array.isArray(legacy.items)) throw new Error("legacy-preview.json must contain an items array.");
+
+const feedPath = join(root, "data", "legacy-feed.json");
+const feed = await readJson(feedPath);
+if (!feed || !Array.isArray(feed.items)) throw new Error("legacy-feed.json must contain an items array.");
+
+const overridesPath = join(root, "data", "legacy-type-overrides.json");
+const overrides = await readJson(overridesPath);
+if (overrides?.schema !== "kfb-legacy-type-overrides-v1" || !Array.isArray(overrides.overrides)) {
+  throw new Error("legacy-type-overrides.json has an invalid schema.");
+}
+const validTypes = new Set(Object.keys(typeLabel.ja));
+const overrideMap = new Map();
+for (const entry of overrides.overrides) {
+  if (!entry?.id || !entry?.type || !validTypes.has(entry.type)) throw new Error("Invalid legacy type override.");
+  if (overrideMap.has(entry.id)) throw new Error(`Duplicate legacy type override: ${entry.id}`);
+  overrideMap.set(entry.id, entry.type);
+}
+
+const previewMatches = new Set();
+for (const item of legacy.items) {
+  const nextType = overrideMap.get(item.id);
+  if (nextType) {
+    item.type = nextType;
+    previewMatches.add(item.id);
+  }
+}
+const feedMatches = new Set();
+for (const item of feed.items) {
+  const nextType = overrideMap.get(item.id);
+  if (nextType) {
+    item.type = nextType;
+    feedMatches.add(item.id);
+  }
+}
+for (const id of overrideMap.keys()) {
+  if (!previewMatches.has(id)) throw new Error(`Legacy type override not found in preview data: ${id}`);
+  if (!feedMatches.has(id)) throw new Error(`Legacy type override not found in feed data: ${id}`);
+}
+legacy.purpose = "Historical KFB activity records.";
+delete legacy.publication_note;
+feed.purpose = "KFB activity listing.";
+await writeFile(legacyPath, JSON.stringify(legacy), "utf8");
+await writeFile(feedPath, JSON.stringify(feed), "utf8");
+await rm(overridesPath, { force: true });
+console.log(`Applied ${overrideMap.size} Drive-owned legacy type override(s) to preview and feed data.`);
 
 let generated = 0;
 for (const item of legacy.items) {
