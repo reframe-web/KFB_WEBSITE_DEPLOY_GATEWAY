@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-official-voice-20261003-02",
-  "reason": "Disarmed after successful official-voice cleanup deployment run #74."
+  "deploy": true,
+  "request_id": "kfb-financials-remove-howto-20261003-01",
+  "reason": "Remove redundant How to Read sections from JA/EN Financials pages. Preserve official-voice rules, Basic Authentication, noindex/crawler blocking, Stripe sandbox state, and existing public-copy hygiene."
 }
