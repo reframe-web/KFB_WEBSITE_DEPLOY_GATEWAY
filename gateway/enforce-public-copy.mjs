@@ -52,7 +52,7 @@ function navLink(item, current = false) {
 }
 
 function isCurrentNavItem(item, section, annualReport) {
-  if (item.annual_report) return annualReport;
+  if (item.annual_report) return section === item.section || annualReport;
   if (item.section === "activities") return section === "activities" && !annualReport;
   return item.section === section || (Array.isArray(item.aliases) && item.aliases.includes(section));
 }
