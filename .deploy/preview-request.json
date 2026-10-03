@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-support-ticket-badge-fix-20261003-0934",
-  "reason": "Publish the eight proofread KFB support-ticket images with corrected top-left Okinawa City badge text and preserved finalized copy/layout."
+  "reason": "Disarmed after successful deployment of the proofread support-ticket badge correction."
 }
