@@ -24,10 +24,11 @@ const commonReplacements = [
 ];
 
 
+
 function navLink(href, label, current = false, className = "") {
-  const cls = className ? \` class="\${className}"\` : "";
+  const cls = className ? ` class="${className}"` : "";
   const cur = current ? ' aria-current="page"' : "";
-  return \`<a\${cls} href="\${href}"\${cur}>\${label}</a>\`;
+  return `<a${cls} href="${href}"${cur}>${label}</a>`;
 }
 
 function rewriteSiteChrome(html, rel) {
@@ -48,7 +49,7 @@ function rewriteSiteChrome(html, rel) {
         navLink("/ja/activities/#annual-financial", "会計・決算", annualReport),
         navLink("/ja/support/", "支援する", section === "support", "support-link"),
         navLink("/ja/contact/", "お問い合わせ", section === "contact"),
-        \`<a class="nav-lang" href="\${langHref}">\${langLabel}</a>\`,
+        `<a class="nav-lang" href="${langHref}">${langLabel}</a>`,
       ].join("")
     : [
         navLink("/en/about/", "About KFB", section === "about" || section === "what-we-do"),
@@ -56,12 +57,12 @@ function rewriteSiteChrome(html, rel) {
         navLink("/en/activities/#annual-financial", "Financials", annualReport),
         navLink("/en/support/", "Support Us", section === "support", "support-link"),
         navLink("/en/contact/", "Contact", section === "contact"),
-        \`<a class="nav-lang" href="\${langHref}">\${langLabel}</a>\`,
+        `<a class="nav-lang" href="${langHref}">${langLabel}</a>`,
       ].join("");
 
   html = html.replace(
     /<nav class="nav" id="primary-nav" data-nav(?: aria-label="[^"]*")?>[\s\S]*?<\/nav>/u,
-    \`<nav class="nav" id="primary-nav" data-nav aria-label="\${isJa ? "メインナビゲーション" : "Primary navigation"}">\${nav}</nav>\`
+    `<nav class="nav" id="primary-nav" data-nav aria-label="${isJa ? "メインナビゲーション" : "Primary navigation"}">${nav}</nav>`
   );
 
   if (rel === "ja/activities/index.html" || rel === "en/activities/index.html") {
@@ -72,8 +73,8 @@ function rewriteSiteChrome(html, rel) {
   }
 
   const footer = isJa
-    ? \`<footer class="footer"><div class="shell"><div class="footer-grid"><div><a class="brand" href="/ja/"><img class="brand-logo" src="/assets/images/kfb-mark.webp" width="300" height="300" alt=""><span class="brand-name">子どもフードバンクKFB</span></a><p><strong>一般社団法人 子どもフードバンクKFB</strong><br>沖縄県沖縄市を拠点に、子どもと家庭を支える活動を行っています。</p></div><div class="footer-links"><strong>知る・報告</strong><a href="/ja/about/">KFBについて</a><a href="/ja/what-we-do/">活動内容を詳しく見る</a><a href="/ja/activities/">活動報告</a><a href="/ja/activities/#annual-financial">会計・決算</a></div><div class="footer-links"><strong>支援・つながる</strong><a href="/ja/support/">支援する</a><a href="/ja/contact/">お問い合わせ</a><a href="https://youtube.com/@kfb331" target="_blank" rel="noopener">YouTube ↗</a><a href="/ja/privacy/">プライバシーポリシー</a></div></div><div class="footer-bottom"><small>© Kodomo Food Bank KFB</small><small><a href="\${langHref}">\${langLabel}</a></small></div></div></footer>\`
-    : \`<footer class="footer"><div class="shell"><div class="footer-grid"><div><a class="brand" href="/en/"><img class="brand-logo" src="/assets/images/kfb-mark.webp" width="300" height="300" alt=""><span class="brand-name">Kodomo Food Bank KFB</span></a><p><strong>Kodomo Food Bank KFB</strong><br>Supporting children and families from Okinawa City, Okinawa, Japan.</p></div><div class="footer-links"><strong>About & Reports</strong><a href="/en/about/">About KFB</a><a href="/en/what-we-do/">What We Do</a><a href="/en/activities/">Activity Reports</a><a href="/en/activities/#annual-financial">Financials</a></div><div class="footer-links"><strong>Support & Connect</strong><a href="/en/support/">Support Us</a><a href="/en/contact/">Contact</a><a href="https://youtube.com/@kfb331" target="_blank" rel="noopener">YouTube ↗</a><a href="/en/privacy/">Privacy Policy</a></div></div><div class="footer-bottom"><small>© Kodomo Food Bank KFB</small><small><a href="\${langHref}">\${langLabel}</a></small></div></div></footer>\`;
+    ? `<footer class="footer"><div class="shell"><div class="footer-grid"><div><a class="brand" href="/ja/"><img class="brand-logo" src="/assets/images/kfb-mark.webp" width="300" height="300" alt=""><span class="brand-name">子どもフードバンクKFB</span></a><p><strong>一般社団法人 子どもフードバンクKFB</strong><br>沖縄県沖縄市を拠点に、子どもと家庭を支える活動を行っています。</p></div><div class="footer-links"><strong>知る・報告</strong><a href="/ja/about/">KFBについて</a><a href="/ja/what-we-do/">活動内容を詳しく見る</a><a href="/ja/activities/">活動報告</a><a href="/ja/activities/#annual-financial">会計・決算</a></div><div class="footer-links"><strong>支援・つながる</strong><a href="/ja/support/">支援する</a><a href="/ja/contact/">お問い合わせ</a><a href="https://youtube.com/@kfb331" target="_blank" rel="noopener">YouTube ↗</a><a href="/ja/privacy/">プライバシーポリシー</a></div></div><div class="footer-bottom"><small>© Kodomo Food Bank KFB</small><small><a href="${langHref}">${langLabel}</a></small></div></div></footer>`
+    : `<footer class="footer"><div class="shell"><div class="footer-grid"><div><a class="brand" href="/en/"><img class="brand-logo" src="/assets/images/kfb-mark.webp" width="300" height="300" alt=""><span class="brand-name">Kodomo Food Bank KFB</span></a><p><strong>Kodomo Food Bank KFB</strong><br>Supporting children and families from Okinawa City, Okinawa, Japan.</p></div><div class="footer-links"><strong>About & Reports</strong><a href="/en/about/">About KFB</a><a href="/en/what-we-do/">What We Do</a><a href="/en/activities/">Activity Reports</a><a href="/en/activities/#annual-financial">Financials</a></div><div class="footer-links"><strong>Support & Connect</strong><a href="/en/support/">Support Us</a><a href="/en/contact/">Contact</a><a href="https://youtube.com/@kfb331" target="_blank" rel="noopener">YouTube ↗</a><a href="/en/privacy/">Privacy Policy</a></div></div><div class="footer-bottom"><small>© Kodomo Food Bank KFB</small><small><a href="${langHref}">${langLabel}</a></small></div></div></footer>`;
 
   return html.replace(/<footer class="footer">[\s\S]*?<\/footer>/u, footer);
 }
