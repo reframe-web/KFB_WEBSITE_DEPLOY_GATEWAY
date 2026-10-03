@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-drive-nav-config-20261003-01",
-  "reason": "Verify protected preview is generated from Drive canonical site-navigation.json; preserve auth and noindex."
+  "reason": "Disarmed after successful deployment from Drive-owned site-navigation.json."
 }
