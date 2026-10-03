@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-financials-remove-howto-20261003-01",
-  "reason": "Disarmed after successful Financials How to Read removal deployment run #76."
+  "deploy": true,
+  "request_id": "kfb-voice-20261003-01",
+  "reason": "KFB voice preview"
 }
