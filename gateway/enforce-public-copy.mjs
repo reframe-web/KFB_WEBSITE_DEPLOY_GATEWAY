@@ -45,6 +45,29 @@ for (const lang of ["ja", "en"]) {
 }
 fs.unlinkSync(siteNavigationPath);
 
+const publicCopyOverridesPath = path.join(root, "data", "public-copy-overrides.json");
+if (!fs.existsSync(publicCopyOverridesPath)) {
+  throw new Error("Drive canonical data/public-copy-overrides.json is required.");
+}
+const publicCopyOverridesText = fs.readFileSync(publicCopyOverridesPath, "utf8").replace(/^\uFEFF/u, "");
+const publicCopyOverrides = JSON.parse(publicCopyOverridesText);
+if (publicCopyOverrides?.schema !== "kfb-public-copy-overrides-v1" || publicCopyOverrides?.version !== 1) {
+  throw new Error("Drive canonical public-copy-overrides.json has an invalid schema.");
+}
+const drivePathReplacements = publicCopyOverrides.replacements ?? {};
+for (const [rel, replacements] of Object.entries(drivePathReplacements)) {
+  if (!Array.isArray(replacements)) throw new Error(`public-copy-overrides replacements for ${rel} must be an array.`);
+  for (const pair of replacements) {
+    if (!Array.isArray(pair) || pair.length !== 2 || pair.some((value) => typeof value !== "string")) {
+      throw new Error(`public-copy-overrides replacement for ${rel} must be [from,to] strings.`);
+    }
+  }
+}
+const driveForbidden = Array.isArray(publicCopyOverrides.forbidden_phrases)
+  ? publicCopyOverrides.forbidden_phrases.filter((value) => typeof value === "string" && value)
+  : [];
+fs.unlinkSync(publicCopyOverridesPath);
+
 function navLink(item, current = false) {
   const cls = item.class_name ? ` class="${item.class_name}"` : "";
   const cur = current ? ' aria-current="page"' : "";
@@ -109,13 +132,19 @@ const pathReplacements = {
     ['>テスト決済へ</a>', '>この金額で支援する</a>'],
     ['>継続支援をテスト</a>', '>毎月支援する</a>'],
     [' data-stripe-sandbox="true"', ''],
-    ['<div class="support-ticket-source small-print">カード情報はこのサイトやAIでは保存せず、Stripeの決済画面で処理します。現在のリンクはStripeサンドボックスです。</div>', '<div class="support-ticket-source small-print">カード情報はKFBサイトでは保存されず、Stripeの決済画面で安全に処理されます。</div>'],
+    ['<div class="support-ticket-source small-print">カード情報はこのサイトやAIでは保存せず、Stripeの決済画面で処理します。現在のリンクはStripeサンドボックスです。</div>', '<div class="support-ticket-source small-print">カード情報は当サイトでは保存せず、Stripeの決済画面で安全に処理されます。</div>'],
+    ['カード情報はKFBサイトでは保存されず、Stripeの決済画面で安全に処理されます。', 'カード情報は当サイトでは保存せず、Stripeの決済画面で安全に処理されます。'],
+    ['KFBの活動は、地域の皆さまからのご寄付やご協力に支えられています。カードでの支援、銀行振込、企業・団体からのご支援など、参加しやすい方法をお選びください。', '私たちの活動は、地域の皆さまからのご寄付やご協力に支えられています。カードでの支援、銀行振込、企業・団体からのご支援など、参加しやすい方法をお選びください。'],
+    ['毎月、自動で継続してKFBの活動を支えるプランです。', '毎月、自動で継続して私たちの活動を支えていただけるプランです。'],
+    ['無理のない金額から、KFBの活動を毎月継続して支えるプランです。', '無理のない金額から、私たちの活動を毎月継続して支えていただけます。'],
+    ['地域の子どもたちを支えるKFBの活動を、毎月継続して応援するプランです。', '地域の子どもたちを支える私たちの活動を、毎月継続して応援していただけます。'],
     ['<p class="bank-note">※公開前にKFB側の最終確認を行い、変更がある場合は正本を更新します。口座情報の変更は推測で行いません。</p>', ''],
     ['活動報告や年次・会計情報を通じて、いただいた支援がどのような活動につながったかを確認できるサイトづくりを進めています。', '活動報告や年次・会計情報を通じて、いただいた支援がどのような活動につながったかをお伝えします。'],
   ],
   "en/support/index.html": [
     ['Ways to support Kodomo Food Bank KFB in Okinawa, including planned card giving and Japanese bank transfer details.', 'Ways to support Kodomo Food Bank KFB in Okinawa, including card giving, Japanese bank transfer, partnerships and volunteering.'],
-    ['KFB’s work is supported by donations and community cooperation. The site now includes a Stripe Sandbox checkout for testing card support while retaining bank transfer options.', 'KFB’s work is supported by donations and community cooperation. Choose the way of giving that works best for you, including card support and Japanese bank transfer.'],
+    ['KFB’s work is supported by donations and community cooperation. The site now includes a Stripe Sandbox checkout for testing card support while retaining bank transfer options.', 'Our work is supported by donations and community cooperation. Choose the way of giving that works best for you, including card support and Japanese bank transfer.'],
+    ['KFB’s work is supported by donations and community cooperation. Choose the way of giving that works best for you, including card support and Japanese bank transfer.', 'Our work is supported by donations and community cooperation. Choose the way of giving that works best for you, including card support and Japanese bank transfer.'],
     ['All eight support-ticket amounts currently used on Tsuku2 are now connected to Stripe Sandbox at the same payment amounts. Both one-time and monthly recurring contribution flows can be tested through the production-site experience.', 'Choose either a one-time contribution or ongoing monthly support by card.'],
     ['<div class="preview-note"><strong>Test payments only.</strong> Stripe Sandbox is active, so no real charge or payout will occur. The links will be replaced with live Stripe links after client verification and account activation.</div>', ''],
     ['<div class="preview-note"><strong>Configuration under review:</strong> these amounts match KFB\'s current Tsuku2 payment amounts. Tax treatment, final amounts and recurring terms remain subject to KFB confirmation. Live Stripe links will replace these sandbox links after account activation.</div>', ''],
@@ -123,7 +152,11 @@ const pathReplacements = {
     ['>Test monthly checkout</a>', '>Give monthly</a>'],
     [' data-stripe-sandbox="true"', ''],
     ['These plans are intended to charge automatically each month after Stripe is connected.', 'Choose a monthly contribution to support KFB on an ongoing basis.'],
-    ['<div class="support-ticket-source small-print">KFB and this website do not store card details. Card information is handled on Stripe\'s checkout surface. The current links use Stripe Sandbox.</div>', '<div class="support-ticket-source small-print">KFB does not store card details on this website. Card information is handled securely on Stripe\'s checkout surface.</div>'],
+    ['<div class="support-ticket-source small-print">KFB and this website do not store card details. Card information is handled on Stripe\'s checkout surface. The current links use Stripe Sandbox.</div>', '<div class="support-ticket-source small-print">We do not store card details on this website. Card information is handled securely on Stripe\'s checkout surface.</div>'],
+    ["KFB does not store card details on this website. Card information is handled securely on Stripe's checkout surface.", "We do not store card details on this website. Card information is handled securely on Stripe's checkout surface."],
+    ['Supports KFB’s work to provide meals and welcoming places where children can feel safe.', 'Supports our work to provide meals and welcoming places where children can feel safe.'],
+    ['Supports KFB’s work for children in the community, including meals and welcoming places.', 'Supports our work for children in the community, including meals and welcoming places.'],
+    ['An approachable way to support KFB’s work every month.', 'An approachable way to support our work every month.'],
     ['These are KFB’s current domestic bank-transfer details. No SWIFT/BIC or international-wire information is shown because it has not been verified.', 'For domestic bank transfers in Japan, please use one of the accounts below.'],
     ['Bank-transfer fees, if any, depend on your bank. Details will be reconfirmed before public launch.', 'Bank-transfer fees, if any, depend on your bank.'],
   ],
@@ -177,6 +210,7 @@ const pathReplacements = {
 };
 
 const forbidden = [
+  ...driveForbidden,
   "公開前プレビュー",
   "Private pre-release preview",
   "現在はテスト決済です。",
@@ -234,6 +268,7 @@ for (const file of walk(root)) {
 
   for (const [from, to] of commonReplacements) html = html.split(from).join(to);
   for (const [from, to] of pathReplacements[rel] ?? []) html = html.split(from).join(to);
+  for (const [from, to] of drivePathReplacements[rel] ?? []) html = html.split(from).join(to);
   html = rewriteSiteChrome(html, rel);
 
   if (html !== before) {
