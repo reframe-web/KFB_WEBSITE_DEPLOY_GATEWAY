@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-production-launch-20261001",
-  "reason": "Disarmed until production gateway verification passes."
+  "deploy": true,
+  "request_id": "kfb-restore-public-20261003-01",
+  "reason": "Restore public production after private-preview worker verification and publish approved voice/visual source refinements."
 }
