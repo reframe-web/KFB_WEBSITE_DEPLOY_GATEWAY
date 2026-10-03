@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-2024-financials-20261003-01",
-  "reason": "Disarmed after successful FY2024 financials deployment run #71."
+  "deploy": true,
+  "request_id": "kfb-official-voice-20261003-01",
+  "reason": "Deploy KFB official-voice copy normalization from Drive canonical rules. Preserve Basic Authentication, noindex/crawler blocking, Stripe sandbox state, and existing public-copy hygiene."
 }
