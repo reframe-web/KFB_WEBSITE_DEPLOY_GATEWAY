@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-financials-page-20261003-01",
-  "reason": "Deploy dedicated bilingual Financials pages and navigation from Drive canonical source; preserve authentication and noindex."
+  "reason": "Disarmed after successful deployment of dedicated bilingual KFB financials pages."
 }
