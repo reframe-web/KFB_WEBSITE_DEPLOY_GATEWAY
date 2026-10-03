@@ -1,6 +1,6 @@
 {
   "schema": 1,
   "deploy": true,
-  "request_id": "kfb-official-voice-20261003-01",
-  "reason": "Deploy KFB official-voice copy normalization from Drive canonical rules. Preserve Basic Authentication, noindex/crawler blocking, Stripe sandbox state, and existing public-copy hygiene."
+  "request_id": "kfb-official-voice-20261003-02",
+  "reason": "Retry KFB official-voice cleanup after removing remaining legacy-source metadata. Preserve Basic Authentication, noindex/crawler blocking, Stripe sandbox state, and public-copy hygiene."
 }
