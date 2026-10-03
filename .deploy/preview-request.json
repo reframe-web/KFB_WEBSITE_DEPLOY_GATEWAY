@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-voice-visual-20261003-03",
-  "reason": "Deploy finalized KFB voice and visual refinement from Drive canonical source"
+  "deploy": false,
+  "request_id": "kfb-seo-ux-20261003-01-done",
+  "reason": "Deployment completed successfully; request disarmed"
 }
