@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-support-ticket-badge-fix-20261003-0934",
-  "reason": "Disarmed after successful deployment of the proofread support-ticket badge correction."
+  "deploy": true,
+  "request_id": "kfb-legacy-copy-event-taxonomy-20261003-01",
+  "reason": "Remove visitor-visible legacy migration/source-review notes, apply Drive-reviewed event taxonomy, and preserve existing authentication/noindex."
 }
