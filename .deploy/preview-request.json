@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-legacy-copy-event-taxonomy-20261003-01",
-  "reason": "Disarmed after successful deployment of legacy public-copy cleanup and reviewed event taxonomy."
+  "deploy": true,
+  "request_id": "kfb-nav-footer-20261003-01",
+  "reason": "Deploy protected-preview navigation consolidation and strengthened footer; preserve authentication and noindex."
 }
