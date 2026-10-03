@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-nav-footer-20261003-01",
-  "reason": "Deploy protected-preview navigation consolidation and strengthened footer; preserve authentication and noindex."
+  "reason": "Disarmed after successful protected-preview navigation and footer deployment."
 }
