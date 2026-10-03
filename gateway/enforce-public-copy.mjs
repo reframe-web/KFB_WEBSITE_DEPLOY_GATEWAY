@@ -130,6 +130,22 @@ const forbidden = [
   "Financial image under review",
   "Source verified",
   "being re-verified",
+  "旧サイト移行記録",
+  "旧サイトから保全した活動記録",
+  "最終的な公開可否は移行レビュー",
+  "旧サイト原文",
+  "移行内容との照合用",
+  "旧サイト側の原文も確認できます",
+  "元ページを開く",
+  "旧サイト移行記事",
+  "保存原本から利用できる本文を確認できませんでした",
+  "English archive translation",
+  "protected migration review",
+  "Original legacy page",
+  "Open the source page preserved from the previous website.",
+  "Open original page",
+  "KFB legacy archive",
+  "The preserved source does not contain usable body text.",
 ];
 
 let changedFiles = 0;
