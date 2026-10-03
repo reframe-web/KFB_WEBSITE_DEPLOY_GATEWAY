@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-legacy-copy-event-taxonomy-20261003-01",
-  "reason": "Remove visitor-visible legacy migration/source-review notes, apply Drive-reviewed event taxonomy, and preserve existing authentication/noindex."
+  "reason": "Disarmed after successful deployment of legacy public-copy cleanup and reviewed event taxonomy."
 }
