@@ -25,10 +25,41 @@ const commonReplacements = [
 
 
 
-function navLink(href, label, current = false, className = "") {
-  const cls = className ? ` class="${className}"` : "";
+
+const siteNavigationPath = path.join(root, "data", "site-navigation.json");
+if (!fs.existsSync(siteNavigationPath)) {
+  throw new Error("Drive canonical data/site-navigation.json is required.");
+}
+const siteNavigationText = fs.readFileSync(siteNavigationPath, "utf8").replace(/^\uFEFF/u, "");
+const siteNavigation = JSON.parse(siteNavigationText);
+if (siteNavigation?.schema !== "kfb-site-navigation-v1" || siteNavigation?.version !== 1) {
+  throw new Error("Drive canonical site-navigation.json has an invalid schema.");
+}
+for (const lang of ["ja", "en"]) {
+  if (!Array.isArray(siteNavigation.navigation?.[lang]) || siteNavigation.navigation[lang].length !== 5) {
+    throw new Error(`site-navigation.json must define five primary navigation items for ${lang}.`);
+  }
+  if (!Array.isArray(siteNavigation.footer?.[lang]?.columns) || siteNavigation.footer[lang].columns.length !== 2) {
+    throw new Error(`site-navigation.json must define two footer link columns for ${lang}.`);
+  }
+}
+fs.unlinkSync(siteNavigationPath);
+
+function navLink(item, current = false) {
+  const cls = item.class_name ? ` class="${item.class_name}"` : "";
   const cur = current ? ' aria-current="page"' : "";
-  return `<a${cls} href="${href}"${cur}>${label}</a>`;
+  return `<a${cls} href="${item.href}"${cur}>${item.label}</a>`;
+}
+
+function isCurrentNavItem(item, section, annualReport) {
+  if (item.annual_report) return annualReport;
+  if (item.section === "activities") return section === "activities" && !annualReport;
+  return item.section === section || (Array.isArray(item.aliases) && item.aliases.includes(section));
+}
+
+function footerLink(item) {
+  const external = item.external ? ' target="_blank" rel="noopener"' : "";
+  return `<a href="${item.href}"${external}>${item.label}</a>`;
 }
 
 function rewriteSiteChrome(html, rel) {
@@ -36,29 +67,16 @@ function rewriteSiteChrome(html, rel) {
   const isEn = rel.startsWith("en/");
   if (!isJa && !isEn) return html;
 
+  const lang = isJa ? "ja" : "en";
   const langMatch = html.match(/<a class="nav-lang" href="([^"]+)">([^<]+)<\/a>/u);
   const langHref = langMatch?.[1] ?? (isJa ? "/en/" : "/ja/");
   const langLabel = isJa ? "English" : "日本語";
   const section = rel.split("/")[1] ?? "";
   const annualReport = /^(?:ja|en)\/activities\/(?:2018|2022|2023|2024)\/index\.html$/u.test(rel);
 
-  const nav = isJa
-    ? [
-        navLink("/ja/about/", "KFBについて", section === "about" || section === "what-we-do"),
-        navLink("/ja/activities/", "活動報告", section === "activities" && !annualReport),
-        navLink("/ja/activities/#annual-financial", "会計・決算", annualReport),
-        navLink("/ja/support/", "支援する", section === "support", "support-link"),
-        navLink("/ja/contact/", "お問い合わせ", section === "contact"),
-        `<a class="nav-lang" href="${langHref}">${langLabel}</a>`,
-      ].join("")
-    : [
-        navLink("/en/about/", "About KFB", section === "about" || section === "what-we-do"),
-        navLink("/en/activities/", "Activity Reports", section === "activities" && !annualReport),
-        navLink("/en/activities/#annual-financial", "Financials", annualReport),
-        navLink("/en/support/", "Support Us", section === "support", "support-link"),
-        navLink("/en/contact/", "Contact", section === "contact"),
-        `<a class="nav-lang" href="${langHref}">${langLabel}</a>`,
-      ].join("");
+  const nav = siteNavigation.navigation[lang]
+    .map((item) => navLink(item, isCurrentNavItem(item, section, annualReport)))
+    .join("") + `<a class="nav-lang" href="${langHref}">${langLabel}</a>`;
 
   html = html.replace(
     /<nav class="nav" id="primary-nav" data-nav(?: aria-label="[^"]*")?>[\s\S]*?<\/nav>/u,
@@ -72,9 +90,12 @@ function rewriteSiteChrome(html, rel) {
     );
   }
 
-  const footer = isJa
-    ? `<footer class="footer"><div class="shell"><div class="footer-grid"><div><a class="brand" href="/ja/"><img class="brand-logo" src="/assets/images/kfb-mark.webp" width="300" height="300" alt=""><span class="brand-name">子どもフードバンクKFB</span></a><p><strong>一般社団法人 子どもフードバンクKFB</strong><br>沖縄県沖縄市を拠点に、子どもと家庭を支える活動を行っています。</p></div><div class="footer-links"><strong>知る・報告</strong><a href="/ja/about/">KFBについて</a><a href="/ja/what-we-do/">活動内容を詳しく見る</a><a href="/ja/activities/">活動報告</a><a href="/ja/activities/#annual-financial">会計・決算</a></div><div class="footer-links"><strong>支援・つながる</strong><a href="/ja/support/">支援する</a><a href="/ja/contact/">お問い合わせ</a><a href="https://youtube.com/@kfb331" target="_blank" rel="noopener">YouTube ↗</a><a href="/ja/privacy/">プライバシーポリシー</a></div></div><div class="footer-bottom"><small>© Kodomo Food Bank KFB</small><small><a href="${langHref}">${langLabel}</a></small></div></div></footer>`
-    : `<footer class="footer"><div class="shell"><div class="footer-grid"><div><a class="brand" href="/en/"><img class="brand-logo" src="/assets/images/kfb-mark.webp" width="300" height="300" alt=""><span class="brand-name">Kodomo Food Bank KFB</span></a><p><strong>Kodomo Food Bank KFB</strong><br>Supporting children and families from Okinawa City, Okinawa, Japan.</p></div><div class="footer-links"><strong>About & Reports</strong><a href="/en/about/">About KFB</a><a href="/en/what-we-do/">What We Do</a><a href="/en/activities/">Activity Reports</a><a href="/en/activities/#annual-financial">Financials</a></div><div class="footer-links"><strong>Support & Connect</strong><a href="/en/support/">Support Us</a><a href="/en/contact/">Contact</a><a href="https://youtube.com/@kfb331" target="_blank" rel="noopener">YouTube ↗</a><a href="/en/privacy/">Privacy Policy</a></div></div><div class="footer-bottom"><small>© Kodomo Food Bank KFB</small><small><a href="${langHref}">${langLabel}</a></small></div></div></footer>`;
+  const footerConfig = siteNavigation.footer[lang];
+  const brandName = isJa ? "子どもフードバンクKFB" : "Kodomo Food Bank KFB";
+  const columns = footerConfig.columns.map((column) =>
+    `<div class="footer-links"><strong>${column.heading}</strong>${column.links.map(footerLink).join("")}</div>`
+  ).join("");
+  const footer = `<footer class="footer"><div class="shell"><div class="footer-grid"><div><a class="brand" href="/${lang}/"><img class="brand-logo" src="/assets/images/kfb-mark.webp" width="300" height="300" alt=""><span class="brand-name">${brandName}</span></a><p><strong>${footerConfig.organization}</strong><br>${footerConfig.description}</p></div>${columns}</div><div class="footer-bottom"><small>© Kodomo Food Bank KFB</small><small><a href="${langHref}">${langLabel}</a></small></div></div></footer>`;
 
   return html.replace(/<footer class="footer">[\s\S]*?<\/footer>/u, footer);
 }
