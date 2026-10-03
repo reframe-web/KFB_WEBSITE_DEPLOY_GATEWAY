@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-restore-public-20261003-01",
-  "reason": "Restore public production after private-preview worker verification and publish approved voice/visual source refinements."
+  "deploy": false,
+  "request_id": "kfb-production-safety-disarm-20261003-01",
+  "reason": "No unauthenticated public release is approved; keep production deploy request disarmed"
 }
