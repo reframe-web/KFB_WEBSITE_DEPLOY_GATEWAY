@@ -68,6 +68,49 @@ const driveForbidden = Array.isArray(publicCopyOverrides.forbidden_phrases)
   : [];
 fs.unlinkSync(publicCopyOverridesPath);
 
+const voiceCopyPath = path.join(root, "data", "voice-copy.json");
+let voiceCopyReplacements = {};
+let voiceFeedOverrides = {};
+if (fs.existsSync(voiceCopyPath)) {
+  const voiceCopyText = fs.readFileSync(voiceCopyPath, "utf8").replace(/^\uFEFF/u, "");
+  const voiceCopy = JSON.parse(voiceCopyText);
+  if (voiceCopy?.schema !== "kfb-voice-copy-v1" || voiceCopy?.version !== 1) {
+    throw new Error("Drive canonical data/voice-copy.json has an invalid schema.");
+  }
+  voiceCopyReplacements = voiceCopy.replacements ?? {};
+  voiceFeedOverrides = voiceCopy.feed_overrides ?? {};
+  for (const [rel, replacements] of Object.entries(voiceCopyReplacements)) {
+    if (!Array.isArray(replacements)) throw new Error(`voice-copy replacements for ${rel} must be an array.`);
+    for (const pair of replacements) {
+      if (!Array.isArray(pair) || pair.length !== 2 || pair.some((value) => typeof value !== "string")) {
+        throw new Error(`voice-copy replacement for ${rel} must be [from,to] strings.`);
+      }
+    }
+  }
+  fs.unlinkSync(voiceCopyPath);
+}
+
+if (Object.keys(voiceFeedOverrides).length) {
+  const contentIndexPath = path.join(root, "data", "content-index.json");
+  if (!fs.existsSync(contentIndexPath)) throw new Error("Drive canonical data/content-index.json is required.");
+  const contentIndexText = fs.readFileSync(contentIndexPath, "utf8").replace(/^\uFEFF/u, "");
+  const contentIndex = JSON.parse(contentIndexText);
+  if (contentIndex?.schema !== 1 || !Array.isArray(contentIndex?.items)) {
+    throw new Error("Drive canonical content-index.json has an invalid schema.");
+  }
+  const byId = new Map(contentIndex.items.map((item) => [item.id, item]));
+  for (const [id, override] of Object.entries(voiceFeedOverrides)) {
+    if (!override || typeof override !== "object" || Array.isArray(override)) {
+      throw new Error(`voice-copy feed override for ${id} must be an object.`);
+    }
+    const item = byId.get(id);
+    if (!item) throw new Error(`voice-copy feed override targets unknown item: ${id}`);
+    Object.assign(item, override);
+  }
+  contentIndex.updated_at = "2026-10-03";
+  fs.writeFileSync(contentIndexPath, JSON.stringify(contentIndex, null, 2) + "\n");
+}
+
 function navLink(item, current = false) {
   const cls = item.class_name ? ` class="${item.class_name}"` : "";
   const cur = current ? ' aria-current="page"' : "";
@@ -269,6 +312,7 @@ for (const file of walk(root)) {
   for (const [from, to] of commonReplacements) html = html.split(from).join(to);
   for (const [from, to] of pathReplacements[rel] ?? []) html = html.split(from).join(to);
   for (const [from, to] of drivePathReplacements[rel] ?? []) html = html.split(from).join(to);
+  for (const [from, to] of voiceCopyReplacements[rel] ?? []) html = html.split(from).join(to);
   html = rewriteSiteChrome(html, rel);
 
   if (html !== before) {
