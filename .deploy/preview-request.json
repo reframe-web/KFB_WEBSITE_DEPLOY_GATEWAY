@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-official-voice-20261003-02",
-  "reason": "Retry KFB official-voice cleanup after removing remaining legacy-source metadata. Preserve Basic Authentication, noindex/crawler blocking, Stripe sandbox state, and public-copy hygiene."
+  "reason": "Disarmed after successful official-voice cleanup deployment run #74."
 }
