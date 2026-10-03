@@ -1,6 +1,6 @@
 {
   "schema": 1,
   "deploy": true,
-  "request_id": "kfb-voice-visual-20261003-02",
-  "reason": "Apply KFB voice and visual refinement from Drive canonical source"
+  "request_id": "kfb-voice-visual-20261003-03",
+  "reason": "Deploy finalized KFB voice and visual refinement from Drive canonical source"
 }
