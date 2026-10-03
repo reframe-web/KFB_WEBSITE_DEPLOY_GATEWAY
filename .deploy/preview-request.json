@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-favicon-20261003-01",
-  "reason": "Deploy approved KFB favicon assets from canonical Google Drive source."
+  "reason": "Disarmed after successful favicon deployment run #67."
 }
