@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-activities-desktop-20261005-01",
-  "reason": "Refine wide-desktop activities layout while preserving mobile behavior and protected review state"
+  "deploy": false,
+  "request_id": "kfb-activities-desktop-20261005-01-done",
+  "reason": "Deployment completed successfully; request disarmed"
 }
