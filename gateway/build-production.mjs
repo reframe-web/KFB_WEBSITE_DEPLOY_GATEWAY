@@ -31,6 +31,13 @@ function replaceSectionContaining(html, needle, replacement) {
 function transformHtml(html, rel) {
   let out = html;
 
+  // Review-only Drive links may point to unapproved historical articles.
+  // Never expose those links in an unauthenticated public build.
+  out = out.replace(/<a\b(?=[^>]*\bdata-kfb-review-only\s*=)[^>]*>[\s\S]*?<\/a>/giu, "");
+  if (out.includes("data-kfb-review-only")) {
+    throw new Error(`Unremoved review-only link in public page: ${rel}`);
+  }
+
   // Normalize metadata attribute order; the Drive source includes both forms.
   out = out.replace(/<meta\b[^>]*\bname=["']robots["'][^>]*>/giu,
     '<meta name="robots" content="index,follow">');
