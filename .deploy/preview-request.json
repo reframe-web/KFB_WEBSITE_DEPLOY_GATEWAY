@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-finance-review-static-hygiene-20261008-03-done",
-  "reason": "Protected review deployment run #88 succeeded; no public release approved and deployment request is disarmed"
+  "deploy": true,
+  "request_id": "kfb-client-legacy-201-review-20261008-01",
+  "reason": "Protected client review: 201 legacy articles, original photos, review portal, public release fail-closed test"
 }
