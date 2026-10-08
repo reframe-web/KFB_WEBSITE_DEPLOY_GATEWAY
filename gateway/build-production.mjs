@@ -31,10 +31,14 @@ function replaceSectionContaining(html, needle, replacement) {
 function transformHtml(html, rel) {
   let out = html;
 
-  out = out.replace(
-    /<meta\s+name=["']robots["']\s+content=["']noindex,nofollow,noarchive["']\s*\/?>(?!\s*<meta\s+name=["']robots)/giu,
-    '<meta name="robots" content="index,follow">'
-  );
+  // Normalize metadata attribute order; the Drive source includes both forms.
+  out = out.replace(/<meta\b[^>]*\bname=["']robots["'][^>]*>/giu,
+    '<meta name="robots" content="index,follow">');
+  out = out.replace(/<link\b[^>]*\brel=["']canonical["'][^>]*>/giu, (tag) => {
+    const href = tag.match(/\bhref=["']([^"']+)["']/iu)?.[1];
+    if (!href) throw new Error("Canonical link has no href in " + rel);
+    return '<link rel="canonical" href="' + href + '">';
+  });
 
   out = out.replaceAll("kfokinawa@gmail.com", "info@kfbokinawa.org");
   out = out.replaceAll("Private pre-release preview", "");
