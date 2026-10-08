@@ -23,6 +23,12 @@ if (!serviceAccount.client_email || !serviceAccount.private_key) {
 
 const MAX_FILES = 1500;
 const MAX_FILE_BYTES = 25 * 1024 * 1024;
+// Only Drive-owned protected-preview photo bundles may exceed the ordinary file limit.
+const MAX_LEGACY_REVIEW_ZIP_BYTES = 45 * 1024 * 1024;
+function maxAllowedFileBytes(path) {
+  return /^data\/legacy-media-bundles\/kfb-review-media-[0-9]+\.zip$/u.test(path)
+    ? MAX_LEGACY_REVIEW_ZIP_BYTES : MAX_FILE_BYTES;
+}
 const MAX_TOTAL_BYTES = 250 * 1024 * 1024;
 const encoder = new TextEncoder();
 
@@ -167,7 +173,7 @@ async function scanTree(rootId) {
     if (folded.has(key)) throw new Error(`Case-insensitive filename collision: ${file.path}`);
     folded.add(key);
 
-    if (file.size > MAX_FILE_BYTES) {
+    if (file.size > maxAllowedFileBytes(file.path)) {
       throw new Error(`File exceeds the per-file safety limit: ${file.path}`);
     }
     totalBytes += file.size;
@@ -208,7 +214,7 @@ for (const file of before.files) {
   }
 
   const bytes = Buffer.from(await response.arrayBuffer());
-  if (bytes.byteLength > MAX_FILE_BYTES) throw new Error(`Downloaded file exceeds limit: ${file.path}`);
+  if (bytes.byteLength > maxAllowedFileBytes(file.path)) throw new Error(`Downloaded file exceeds limit: ${file.path}`);
 
   const target = resolve(snapshotRoot, ...file.path.split("/"));
   if (target !== snapshotRoot && !target.startsWith(snapshotRoot + sep)) {
