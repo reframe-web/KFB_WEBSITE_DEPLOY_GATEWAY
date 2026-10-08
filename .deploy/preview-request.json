@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-about-promise-copy-20261008-01-complete",
-  "reason": "Protected preview refresh requested, run 104."
+  "deploy": true,
+  "request_id": "kfb-about-promise-privacy-copy-20261008-02",
+  "reason": "Refresh protected/noindex JA and EN About Our Promise privacy statement from canonical Google Drive; do not release public site."
 }
