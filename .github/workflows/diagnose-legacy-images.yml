@@ -1,0 +1,24 @@
+name: Diagnose archived KFB image retrieval (no images uploaded)
+on:
+  push:
+    paths: [".github/workflows/diagnose-legacy-images.yml"]
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Test original public URLs without saving personal images
+        shell: bash
+        run: |
+          set -uo pipefail
+          for url in \
+            "https://web-resource.tsuku2.jp/pic/blog/0000086504/a070a5cf7084d853f9dc2f6907f8f798.jpg" \
+            "https://web-resource.tsuku2.jp/pic/blog/0000086504/6803eab8820c920abb776df680ffdc49.jpg" \
+            "https://home.tsuku2.jp/storeBlogDetail.php?scd=0000086504%26no=25019" \
+            "https://web.archive.org/cdx/search/cdx?url=web-resource.tsuku2.jp%2Fpic%2Fblog%2F0000086504%2Fa070a5cf7084d853f9dc2f6907f8f798.jpg%26output=json"; do
+            printf 'PROBE hostname/path: %s\n' "$url"
+            curl --location --silent --show-error --max-time 18 --head \
+                 --output /dev/null --write-out 'HTTP %{http_code}; content_type %{content_type}; remote_ip %{remote_ip}; redirect %{redirect_url}\n' "$url" || :
+          done
