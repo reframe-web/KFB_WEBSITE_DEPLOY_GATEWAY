@@ -31,7 +31,7 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/kfb-encrypted-artifact"
           cat > "$RUNNER_TEMP/kfb-recovery-public.pem" <<'PUBKEY'
------BEGIN PUBLIC KEY-----
+          -----BEGIN PUBLIC KEY-----
           MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAsSiF1J2Ejbd2xkdG23s6
           Lk/15bB7WbI3W1x17ilQ3jHteiOfcIo2ixYj0xI4x6vOvxt5dzd9uK2Ryi3oaf4r
           uFD1Hd772jPHl3rRoTJMgZiyBejgaka2z66KF5HXI4LTA1U1DvzTPVGRx3b0Bnnf
@@ -42,7 +42,7 @@ jobs:
           vwuXTSITycj3qBkpOmfx6bstfyVyTtnIGzfKEBS/BikNNeeiQFspzYqtqVAPtxMJ
           PYyXXAyJej/1//S+qher11lPO4ZLF6Ea+k9uEouArMZvAgMBAAE=
           -----END PUBLIC KEY-----
-PUBKEY
+          PUBKEY
           openssl rand -hex 32 > "$RUNNER_TEMP/kfb-recovery-password"
           openssl enc -aes-256-cbc -salt -pbkdf2 -iter 220000 \
             -in "$RUNNER_TEMP/wp-photo-recovery.zip" \
