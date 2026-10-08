@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-final-quality-fixes-20261008-01",
-  "reason": "Deploy Drive-canonical FY2024 corrections, annual SEO tags, sitemap coverage and CSS hygiene; preserve Basic Authentication and noindex"
+  "deploy": false,
+  "request_id": "kfb-final-quality-fixes-20261008-01-done",
+  "reason": "Protected deploy run #84 succeeded and deployment trigger disarmed; password and noindex remain required"
 }
