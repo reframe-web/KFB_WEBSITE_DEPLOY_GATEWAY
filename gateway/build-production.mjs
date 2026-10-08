@@ -19,7 +19,7 @@ function replaceSectionContaining(html, needle, replacement) {
   const needleIndex = html.indexOf(needle);
   if (needleIndex < 0) return html;
   let start = -1;
-  for (const match of html.matchAll(/<section\\b[^>]*>/giu)) {
+  for (const match of html.matchAll(/<section\b[^>]*>/giu)) {
     if (match.index > needleIndex) break;
     start = match.index;
   }
