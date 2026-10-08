@@ -32,16 +32,16 @@ jobs:
           mkdir -p "$RUNNER_TEMP/kfb-encrypted-artifact"
           cat > "$RUNNER_TEMP/kfb-recovery-public.pem" <<'PUBKEY'
 -----BEGIN PUBLIC KEY-----
-MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAsSiF1J2Ejbd2xkdG23s6
-Lk/15bB7WbI3W1x17ilQ3jHteiOfcIo2ixYj0xI4x6vOvxt5dzd9uK2Ryi3oaf4r
-uFD1Hd772jPHl3rRoTJMgZiyBejgaka2z66KF5HXI4LTA1U1DvzTPVGRx3b0Bnnf
-BQAaWNn8B12TQGPTtFYM/1QOGfMKCdL3+aB7MU8OaU7scIdBw9qx8i6ZJrvt7MPS
-p2vjG0zbZGuSEF61i4VUI0qSRphHB5xI3PZ9Jwln6mL+zudz1/yW4BVAWwkJt9h5
-wZjcvWjr4yG/vx4sKpVMSdr/wSEJtUvJea5NEC37Ux2TgUSS0/4i+BSh08JfIogN
-OVVjZuQF5Q3CfXo6T+QlsB6+FArK04JQjvDtBTfPg7l3UliNM0GrKa/T3Z1oO62z
-vwuXTSITycj3qBkpOmfx6bstfyVyTtnIGzfKEBS/BikNNeeiQFspzYqtqVAPtxMJ
-PYyXXAyJej/1//S+qher11lPO4ZLF6Ea+k9uEouArMZvAgMBAAE=
------END PUBLIC KEY-----
+          MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAsSiF1J2Ejbd2xkdG23s6
+          Lk/15bB7WbI3W1x17ilQ3jHteiOfcIo2ixYj0xI4x6vOvxt5dzd9uK2Ryi3oaf4r
+          uFD1Hd772jPHl3rRoTJMgZiyBejgaka2z66KF5HXI4LTA1U1DvzTPVGRx3b0Bnnf
+          BQAaWNn8B12TQGPTtFYM/1QOGfMKCdL3+aB7MU8OaU7scIdBw9qx8i6ZJrvt7MPS
+          p2vjG0zbZGuSEF61i4VUI0qSRphHB5xI3PZ9Jwln6mL+zudz1/yW4BVAWwkJt9h5
+          wZjcvWjr4yG/vx4sKpVMSdr/wSEJtUvJea5NEC37Ux2TgUSS0/4i+BSh08JfIogN
+          OVVjZuQF5Q3CfXo6T+QlsB6+FArK04JQjvDtBTfPg7l3UliNM0GrKa/T3Z1oO62z
+          vwuXTSITycj3qBkpOmfx6bstfyVyTtnIGzfKEBS/BikNNeeiQFspzYqtqVAPtxMJ
+          PYyXXAyJej/1//S+qher11lPO4ZLF6Ea+k9uEouArMZvAgMBAAE=
+          -----END PUBLIC KEY-----
 PUBKEY
           openssl rand -hex 32 > "$RUNNER_TEMP/kfb-recovery-password"
           openssl enc -aes-256-cbc -salt -pbkdf2 -iter 220000 \
