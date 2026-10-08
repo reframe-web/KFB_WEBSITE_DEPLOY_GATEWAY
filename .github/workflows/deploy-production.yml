@@ -187,13 +187,26 @@ jobs:
 
           curl -fsS "$origin/ja/contact/" | grep -Fq "info@kfbokinawa.org"
           curl -fsS "$origin/en/contact/" | grep -Fq "info@kfbokinawa.org"
-          curl -fsS "$origin/ja/support/" | grep -Fq "カード寄付は現在準備中"
-          curl -fsS "$origin/en/support/" | grep -Fq "Card giving is currently being prepared"
-          curl -fsS "$origin/data/legacy-feed.json" | grep -Fq '"items":[]'
+          curl -fsS "$origin/ja/support/" -o "$RUNNER_TEMP/ja-support.html"
+          curl -fsS "$origin/en/support/" -o "$RUNNER_TEMP/en-support.html"
+          for lang in ja en; do
+            checkout_count="$(grep -Eo 'href="https://(donate|buy)\.stripe\.com/[^"]+"' "$RUNNER_TEMP/$lang-support.html" | wc -l | tr -d '[:space:]')"
+            test "$checkout_count" = "8"
+            ! grep -Eqi 'stripe\.com/test_' "$RUNNER_TEMP/$lang-support.html"
+          done
+
+          curl -fsS "$origin/data/legacy-feed.json" -o "$RUNNER_TEMP/live-legacy-feed.json"
+          node -e 'const fs=require("node:fs");const [expected,actual]=process.argv.slice(1).map(p=>JSON.parse(fs.readFileSync(p,"utf8")));const ids=x=>x.items.map(i=>i.id).sort().join("|");if(ids(expected)!==ids(actual))process.exit(1)' \
+            "$SNAPSHOT_DIR/data/legacy-feed.json" "$RUNNER_TEMP/live-legacy-feed.json"
 
           test "$(curl -sS -o /dev/null -w '%{http_code}' "$origin/data/legacy-preview.json")" = "404"
           test "$(curl -sS -o /dev/null -w '%{http_code}' "$origin/ja/review/legacy-content/")" = "404"
-          test "$(curl -sS -o /dev/null -w '%{http_code}' "$origin/ja/activities/archive/legacy-tsukutsuku-8692/")" = "404"
+          if node -e 'const f=require(process.argv[1]);process.exit(f.items.some(x=>x.id==="legacy-tsukutsuku-8692")?0:1)' "$SNAPSHOT_DIR/data/legacy-feed.json"; then
+            expected_8692="200"
+          else
+            expected_8692="404"
+          fi
+          test "$(curl -sS -o /dev/null -w '%{http_code}' "$origin/ja/activities/archive/legacy-tsukutsuku-8692/")" = "$expected_8692"
 
           sitemap="$(curl -fsS "$origin/sitemap.xml")"
           echo "$sitemap" | grep -Fq "https://kfbokinawa.org/ja/"
