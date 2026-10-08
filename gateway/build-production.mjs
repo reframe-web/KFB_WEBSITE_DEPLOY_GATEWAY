@@ -121,8 +121,12 @@ for (const item of legacySource.items) {
   }
   seen.add(item.id);
   if (releaseEligible(item)) eligible.set(item.id, item);
-  else for (const lang of ["ja", "en"]) {
-    await rm(pathInRoot(lang, "activities", "archive", item.id), { recursive: true, force: true });
+  else {
+    for (const lang of ["ja", "en"]) {
+      await rm(pathInRoot(lang, "activities", "archive", item.id), { recursive: true, force: true });
+    }
+    // Individual source photos also stay private when their article is not approved.
+    await rm(pathInRoot("assets", "legacy", item.id), { recursive: true, force: true });
   }
 }
 const publicItems = legacyCandidateFeed.items.filter((item) => eligible.has(item.id)).map((item) => {
