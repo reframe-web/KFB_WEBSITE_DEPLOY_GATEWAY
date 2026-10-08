@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-tsuku-latest-and-editorial-fix-20261008-01",
-  "reason": "Protected preview only: match Tsuku2 latest 2023 report listed 2026-05-30; remove migration narration and inactive donor/LINE links. 201 legacy approvals stay false; public deploy disabled."
+  "deploy": false,
+  "request_id": "kfb-tsuku-latest-and-editorial-fix-20261008-01-complete",
+  "reason": "Protected preview workflow run 37741807434 success. Tsuku2 latest article date + archive visitor copy updated in Drive source; all 201 client approvals false. Production request disabled."
 }
