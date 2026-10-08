@@ -42,6 +42,9 @@ jobs:
           set -uo pipefail
           for url in \
             "https://web-resource.tsuku2.jp/pic/blog/0000086504/a070a5cf7084d853f9dc2f6907f8f798.jpg" \
+            "https://kodomofoodbankkfb.com/wp-content/uploads/2023/06/IMG_0301.jpeg" \
+            "https://i0.wp.com/kodomofoodbankkfb.com/wp-content/uploads/2023/06/IMG_0301.jpeg" \
+            "https://img01.ti-da.net/usr/k/o/d/kodomo555/sp-042750200s1515644783.jpg" \
             "https://web-resource.tsuku2.jp/pic/blog/0000086504/6803eab8820c920abb776df680ffdc49.jpg" \
             "https://home.tsuku2.jp/storeBlogDetail.php?scd=0000086504%26no=25019" \
             "https://web.archive.org/cdx/search/cdx?url=web-resource.tsuku2.jp%2Fpic%2Fblog%2F0000086504%2Fa070a5cf7084d853f9dc2f6907f8f798.jpg%26output=json"; do
