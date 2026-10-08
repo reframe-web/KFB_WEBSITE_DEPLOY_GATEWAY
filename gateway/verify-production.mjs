@@ -116,8 +116,26 @@ for (const rel of ["ja/contact/index.html","en/contact/index.html"]) {
 const jaSupport = await readFile(join(root, "ja", "support", "index.html"), "utf8");
 const enSupport = await readFile(join(root, "en", "support", "index.html"), "utf8");
 if (!jaSupport.includes("銀行振込") || !enSupport.includes("Bank Transfer")) throw new Error("Bank transfer section missing.");
-if (!jaSupport.includes("カード寄付は現在準備中") || !enSupport.includes("Card giving is currently being prepared")) {
-  throw new Error("Card donation readiness copy missing.");
+const releaseRequiresLiveStripe = process.argv.includes("--require-live-stripe");
+const checkoutLinks = (html) =>
+  [...html.matchAll(/href=["'](https:\/\/(?:donate|buy)\.stripe\.com\/[^"']+)["']/giu)].map((m) => m[1]);
+const jaCheckout = checkoutLinks(jaSupport);
+const enCheckout = checkoutLinks(enSupport);
+const hasTestCheckout = [...jaCheckout, ...enCheckout].some((url) => /\/test_/iu.test(url));
+if (hasTestCheckout) throw new Error("Sandbox Stripe checkout must not exist in public snapshots.");
+if (jaCheckout.length === 0 && enCheckout.length === 0) {
+  if (releaseRequiresLiveStripe) throw new Error("Live Stripe checkout is not ready: refusing general-public deployment.");
+  if (!jaSupport.includes("カード寄付は現在準備中") || !enSupport.includes("Card giving is currently being prepared")) {
+    throw new Error("Card donation readiness copy missing.");
+  }
+} else {
+  if (jaCheckout.length !== 8 || enCheckout.length !== 8 ||
+      new Set(jaCheckout).size !== 8 || JSON.stringify(jaCheckout) !== JSON.stringify(enCheckout)) {
+    throw new Error("JA/EN live Stripe checkout mismatch or incomplete 8-plan configuration.");
+  }
+  if (jaSupport.includes("カード寄付は現在準備中") || enSupport.includes("Card giving is currently being prepared")) {
+    throw new Error("Live Stripe checkout must not display a coming-soon notice.");
+  }
 }
 
 const sitemap = await readFile(join(root, "sitemap.xml"), "utf8");
