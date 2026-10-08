@@ -1,0 +1,23 @@
+name: Verify KFB private original-image reconciliation
+on:
+  push:
+    paths:
+      - "gateway/reconcile_legacy_images.py"
+      - "gateway/test_reconcile.py"
+      - ".github/workflows/verify-legacy-recovery.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Pillow only
+        run: pip install pillow
+      - name: Run sanitized synthetic fixtures; no KFB photos or live sources
+        run: python -m unittest discover -s gateway -p "test_reconcile.py" -v
