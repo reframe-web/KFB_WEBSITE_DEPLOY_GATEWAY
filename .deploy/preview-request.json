@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-tsuku-latest-and-editorial-fix-20261008-01-complete",
-  "reason": "Protected preview workflow run 37741807434 success. Tsuku2 latest article date + archive visitor copy updated in Drive source; all 201 client approvals false. Production request disabled."
+  "deploy": true,
+  "request_id": "kfb-2023-year-to-archive-crosslink-20261008-02",
+  "reason": "Preview only: 2023 JA/EN annual report links to unapproved historic report are visibly available for client review; production builder strips data-kfb-review-only links and must pass public fail-closed validation."
 }
