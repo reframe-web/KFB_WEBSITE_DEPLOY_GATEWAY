@@ -24,7 +24,9 @@ print("WordPress image CDN requests",len(refs))
 def fetch(ref):
     id,url=ref
     try:
-        req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 (compatible; KFB archival restoration)",
+        parts=urllib.parse.urlsplit(url)
+        encoded_url=urllib.parse.urlunsplit((parts.scheme,parts.netloc,urllib.parse.quote(parts.path,safe="/%:@"),parts.query,parts.fragment))
+        req=urllib.request.Request(encoded_url,headers={"User-Agent":"Mozilla/5.0 (compatible; KFB archival restoration)",
           "Accept":"image/avif,image/webp,image/jpeg,image/png,image/*;q=0.7,*/*;q=0.1"})
         with urllib.request.urlopen(req,timeout=24) as response:
             ct=response.headers.get("Content-Type","").split(";")[0].strip().lower()
