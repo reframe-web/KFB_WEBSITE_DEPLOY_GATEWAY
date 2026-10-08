@@ -35,7 +35,33 @@ if (!/Allow:\s*\//u.test(robots) || /Disallow:\s*\//u.test(robots)) throw new Er
 if (!robots.includes("https://kfbokinawa.org/sitemap.xml")) throw new Error("Production sitemap is not advertised.");
 
 const legacyFeed = JSON.parse(await readFile(join(root, "data", "legacy-feed.json"), "utf8"));
-if (!Array.isArray(legacyFeed.items) || legacyFeed.items.length !== 0) throw new Error("Public legacy feed is not empty.");
+if (!Array.isArray(legacyFeed.items)) throw new Error("Public legacy feed is invalid.");
+const permittedLegacy = new Set();
+for (const item of legacyFeed.items) {
+  if (item.status !== "published" || item.privacy !== "public_safe" ||
+      !/^[A-Za-z0-9._-]+$/u.test(item.id ?? "") || permittedLegacy.has(item.id)) {
+    throw new Error("Unapproved or duplicate item in public legacy feed.");
+  }
+  permittedLegacy.add(item.id);
+  for (const lang of ["ja", "en"]) {
+    const rel = join(root, lang, "activities", "archive", item.id, "index.html");
+    if (!(await exists(rel))) throw new Error("Approved legacy article missing " + item.id);
+  }
+}
+for (const lang of ["ja", "en"]) {
+  const archive = join(root, lang, "activities", "archive");
+  if (await exists(archive)) {
+    for (const id of await readdir(archive)) {
+      if (!permittedLegacy.has(id)) throw new Error("Unapproved legacy article exposed: " + id);
+    }
+  }
+}
+const mediaRoot = join(root, "assets", "legacy");
+if (await exists(mediaRoot)) {
+  for (const id of await readdir(mediaRoot)) {
+    if (!permittedLegacy.has(id)) throw new Error("Unapproved legacy photo exposed: " + id);
+  }
+}
 
 const index = JSON.parse(await readFile(join(root, "data", "content-index.json"), "utf8"));
 if (index.schema !== 1 || !Array.isArray(index.items)) throw new Error("Invalid content index.");
@@ -101,8 +127,11 @@ for (const url of [
 ]) {
   if (!sitemap.includes(url)) throw new Error(`Sitemap missing: ${url}`);
 }
-if (/\/review\/|\/activities\/archive\/legacy-|legacy-preview/iu.test(sitemap)) {
+if (/\/review\/|legacy-preview/iu.test(sitemap)) {
   throw new Error("Preview URL leaked into sitemap.");
+}
+for (const match of sitemap.matchAll(/https:\/\/kfbokinawa\.org\/(?:ja|en)\/activities\/archive\/(legacy-[A-Za-z0-9._-]+)\//gu)) {
+  if (!permittedLegacy.has(match[1])) throw new Error("Unapproved archive URL in sitemap: " + match[1]);
 }
 
 console.log(`KFB production validation passed: ${htmlFiles.length} HTML documents, ${index.items.length} public-safe feed items.`);
