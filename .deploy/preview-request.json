@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-about-promise-privacy-copy-20261008-02",
-  "reason": "Refresh protected/noindex JA and EN About Our Promise privacy statement from canonical Google Drive; do not release public site."
+  "deploy": false,
+  "request_id": "kfb-about-promise-privacy-copy-20261008-02-complete",
+  "reason": "Protected JA/EN About copy refresh triggered in run 106; request disarmed. Production deployment remains disabled."
 }
