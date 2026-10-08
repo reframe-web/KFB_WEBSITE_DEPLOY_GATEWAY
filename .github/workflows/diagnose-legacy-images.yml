@@ -9,6 +9,33 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Check read-only service-account access to original WordPress server backup
+        env:
+          GDRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          node --input-type=module <<'JS'
+          import {createSign} from "node:crypto";
+          const sa=JSON.parse(process.env.GDRIVE_SERVICE_ACCOUNT_JSON);
+          const now=Math.floor(Date.now()/1000);
+          const enc=s=>Buffer.from(JSON.stringify(s)).toString('base64url');
+          const h=enc({alg:"RS256",typ:"JWT"});
+          const b=enc({iss:sa.client_email,scope:"https://www.googleapis.com/auth/drive.readonly",
+            aud:"https://oauth2.googleapis.com/token",iat:now,exp:now+900});
+          const signer=createSign("RSA-SHA256");signer.update(h+"."+b);signer.end();
+          const jwt=h+"."+b+"."+signer.sign(sa.private_key).toString("base64url");
+          const oauth=await fetch("https://oauth2.googleapis.com/token",{method:"POST",
+            headers:{"Content-Type":"application/x-www-form-urlencoded"},
+            body:new URLSearchParams({grant_type:"urn:ietf:params:oauth:grant-type:jwt-bearer",assertion:jwt}),
+            signal:AbortSignal.timeout(12000)});
+          if(!oauth.ok)throw Error("OAuth HTTP "+oauth.status);
+          const tok=(await oauth.json()).access_token;
+          for(const id of ["1Fkptg-V5cB5BjZQLsba-tjMmpxt5h4Xh","1mMh5zN-MBiI-VUdPG73oBKT-hT1SjPE6"]){
+            const r=await fetch("https://www.googleapis.com/drive/v3/files/"+id+"?fields=id%2Cname%2Csize%2CmimeType",
+              {headers:{Authorization:"Bearer "+tok},signal:AbortSignal.timeout(12000)});
+            const v=r.ok?await r.json():null;
+            console.log("Drive backup metadata access",r.status, v?.name??"unavailable",v?.size??"");
+          }
+          JS
       - name: Test original public URLs without saving personal images
         shell: bash
         run: |
