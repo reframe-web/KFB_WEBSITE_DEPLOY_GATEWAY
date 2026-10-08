@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-legacy-photo-recovery-verified-20261008-06-done",
-  "reason": "Protected 201-article review update succeeded; 155 ready / 46 old-photo recovery pending. Preserve Basic Auth, noindex and production request disabled."
+  "deploy": true,
+  "request_id": "kfb-legacy-recovered-122-protected-review-20261008-01",
+  "reason": "Preview-only: add 122 verified legacy photos for 44 historical articles; keep 3 unresolved, 201 articles unapproved, Basic Auth and noindex. Production disabled."
 }
