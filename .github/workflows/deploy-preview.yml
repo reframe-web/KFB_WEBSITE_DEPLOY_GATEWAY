@@ -157,6 +157,7 @@ jobs:
           stage="$RUNNER_TEMP/kfb-production-safety-test"
           cp -a "$SNAPSHOT_DIR" "$stage"
           node gateway/build-production.mjs "$stage"
+          node gateway/verify-production.mjs "$stage"
           if [ -e "$stage/ja/activities/archive/legacy-tsukutsuku-19116/index.html" ]; then
             echo "Unapproved article still present in simulated public output" >&2
             exit 1
