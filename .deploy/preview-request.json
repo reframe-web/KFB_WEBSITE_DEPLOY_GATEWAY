@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-final-quality-fixes-20261008-01-done",
-  "reason": "Protected deploy run #84 succeeded and deployment trigger disarmed; password and noindex remain required"
+  "deploy": true,
+  "request_id": "kfb-hygiene-assets-20261008-02",
+  "reason": "Clean remaining CSS/JS developer comments from Drive canonical source while preserving review Basic Auth, noindex and existing payment state"
 }
