@@ -98,24 +98,57 @@ function transformHtml(html, rel) {
   return out;
 }
 
-const previewOnly = [
-  ["data", "legacy-preview.json"],
-  ["ja", "review"],
-  ["en", "review"],
-  ["ja", "activities", "legacy"],
-  ["en", "activities", "legacy"],
-];
-for (const parts of previewOnly) {
-  await rm(pathInRoot(...parts), { recursive: true, force: true });
+// Fail-closed release gate: public source archives alone do not establish permission.
+const legacySourcePath = pathInRoot("data", "legacy-preview.json");
+const legacyFeedPath = pathInRoot("data", "legacy-feed.json");
+const legacySource = JSON.parse(await readFile(legacySourcePath, "utf8"));
+const legacyCandidateFeed = JSON.parse(await readFile(legacyFeedPath, "utf8"));
+if (!Array.isArray(legacySource.items) || !Array.isArray(legacyCandidateFeed.items)) {
+  throw new Error("Legacy source/feed items arrays are required for release.");
 }
-
+const releaseEligible = (item) => Boolean(
+  item && item.represented_by_existing !== true &&
+  item.status === "published" && item.privacy === "public_safe" &&
+  item.source_public_verified === true && item.client_approved === true &&
+  item.media_approved === true && item.translation_approved === true &&
+  typeof item.approval_reference === "string" && item.approval_reference.trim().length > 0
+);
+const eligible = new Map();
+const seen = new Set();
+for (const item of legacySource.items) {
+  if (!item.id || !/^[A-Za-z0-9._-]+$/u.test(item.id) || seen.has(item.id)) {
+    throw new Error("Legacy release includes duplicate or unsafe ID.");
+  }
+  seen.add(item.id);
+  if (releaseEligible(item)) eligible.set(item.id, item);
+  else for (const lang of ["ja", "en"]) {
+    await rm(pathInRoot(lang, "activities", "archive", item.id), { recursive: true, force: true });
+  }
+}
+const publicItems = legacyCandidateFeed.items.filter((item) => eligible.has(item.id)).map((item) => {
+  const safe = structuredClone(item);
+  safe.status = "published";
+  safe.privacy = "public_safe";
+  for (const key of ["preview_legacy","review_status","client_approved","media_approved",
+    "translation_approved","approval_reference","source_public_evidence"]) delete safe[key];
+  return safe;
+});
+if (publicItems.length !== eligible.size) {
+  throw new Error("Approved legacy items missing or duplicated in legacy feed.");
+}
+for (const parts of [
+  ["data", "legacy-preview.json"], ["ja", "review"], ["en", "review"],
+  ["ja", "activities", "legacy"], ["en", "activities", "legacy"],
+]) await rm(pathInRoot(...parts), { recursive: true, force: true });
 const publicLegacyFeed = {
   schema: "kfb-public-feed-v1",
-  purpose: "Public site has no unreviewed legacy-preview items.",
-  items: [],
+  purpose: "Individually source-verified and client-approved historical articles.",
+  items: publicItems,
 };
 await mkdir(pathInRoot("data"), { recursive: true });
-await writeFile(pathInRoot("data", "legacy-feed.json"), JSON.stringify(publicLegacyFeed), "utf8");
+await writeFile(legacyFeedPath, JSON.stringify(publicLegacyFeed), "utf8");
+console.log("Legacy publication gate: " + eligible.size + " client-approved, " +
+  (legacySource.items.length - eligible.size) + " withheld.");
 
 const htmlFiles = [];
 async function walk(dir) {
