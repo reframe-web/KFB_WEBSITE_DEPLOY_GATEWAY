@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-legacy-recovered-122-protected-review-20261008-01",
-  "reason": "Preview-only: add 122 verified legacy photos for 44 historical articles; keep 3 unresolved, 201 articles unapproved, Basic Auth and noindex. Production disabled."
+  "deploy": false,
+  "request_id": "kfb-legacy-recovered-122-protected-review-20261008-01-done",
+  "reason": "Protected preview #98 succeeded; 487 original-derived review images and 396 archive pages. All 201 legacy items unapproved, 3 images pending. Production remains disabled."
 }
