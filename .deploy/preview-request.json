@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-hygiene-assets-20261008-02-done",
-  "reason": "Protected deployment run #86 succeeded; review password and noindex verified and trigger disarmed"
+  "deploy": true,
+  "request_id": "kfb-finance-review-static-hygiene-20261008-03",
+  "reason": "Refresh protected KFB site from Drive source: legacy 2023 accounting report date correction and FY2018 JA SEO metadata; preserve Basic Auth, robots Disallow and noindex; no payment edits"
 }
