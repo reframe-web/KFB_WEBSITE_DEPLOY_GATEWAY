@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-legacy-recovered-122-protected-review-20261008-01-done",
-  "reason": "Protected preview #98 succeeded; 487 original-derived review images and 396 archive pages. All 201 legacy items unapproved, 3 images pending. Production remains disabled."
+  "deploy": true,
+  "request_id": "kfb-tsuku-latest-and-editorial-fix-20261008-01",
+  "reason": "Protected preview only: match Tsuku2 latest 2023 report listed 2026-05-30; remove migration narration and inactive donor/LINE links. 201 legacy approvals stay false; public deploy disabled."
 }
