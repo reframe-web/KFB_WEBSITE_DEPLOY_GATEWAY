@@ -31,6 +31,18 @@ function replaceSectionContaining(html, needle, replacement) {
 function transformHtml(html, rel) {
   let out = html;
 
+  // Preserve real card checkout at launch; sandbox checkout stays preview-only.
+  const stripeLinks = [...out.matchAll(/href=["'](https:\/\/(?:donate|buy)\.stripe\.com\/[^"']+)["']/giu)].map((m) => m[1]);
+  const sandboxLinks = stripeLinks.filter((url) => /\/test_/iu.test(url));
+  const liveLinks = stripeLinks.filter((url) => !/\/test_/iu.test(url));
+  if (sandboxLinks.length && liveLinks.length) {
+    throw new Error("Mixed Stripe sandbox/live links in " + rel);
+  }
+  if (liveLinks.length && (liveLinks.length !== 8 || new Set(liveLinks).size !== 8)) {
+    throw new Error("Expected eight distinct live Stripe links in " + rel);
+  }
+  const keepLiveCardSupport = liveLinks.length === 8;
+
   // Review-only Drive links may point to unapproved historical articles.
   // Never expose those links in an unauthenticated public build.
   out = out.replace(/<a\b(?=[^>]*\bdata-kfb-review-only\s*=)[^>]*>[\s\S]*?<\/a>/giu, "");
@@ -88,7 +100,7 @@ function transformHtml(html, rel) {
     "Organization information for Kodomo Food Bank KFB."
   );
 
-  if (rel === "ja/support/index.html") {
+  if (rel === "ja/support/index.html" && !keepLiveCardSupport) {
     const section = '<section class="section"><div class="shell"><div class="section-head"><div><div class="kicker">Card Support</div><h2>カードで支援する</h2></div><p>カード寄付は現在準備中です。利用開始後、このページでご案内します。</p></div><div class="info-card"><h3>現在ご利用いただける支援方法</h3><p>銀行振込をご利用いただけます。企業・団体からのご支援やボランティアについてもお問い合わせください。</p></div></div></section>';
     out = replaceSectionContaining(out, '<div class="kicker">Card Support</div>', section);
     out = out.replace(
@@ -97,7 +109,7 @@ function transformHtml(html, rel) {
     );
   }
 
-  if (rel === "en/support/index.html") {
+  if (rel === "en/support/index.html" && !keepLiveCardSupport) {
     const section = '<section class="section"><div class="shell"><div class="section-head"><div><div class="kicker">Card Support</div><h2>Support by card</h2></div><p>Card giving is currently being prepared. This page will be updated when card donations become available.</p></div><div class="info-card"><h3>Ways to support KFB now</h3><p>Domestic bank transfer is currently available. Companies, organizations and prospective volunteers are also welcome to contact KFB.</p></div></div></section>';
     out = replaceSectionContaining(out, '<div class="kicker">Card Support</div>', section);
     out = out.replace(

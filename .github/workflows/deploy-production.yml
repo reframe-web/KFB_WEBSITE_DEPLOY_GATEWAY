@@ -34,13 +34,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            reason="${{ inputs.reason }}"
-            if [ -z "$reason" ]; then reason="manual-production-deploy"; fi
-            echo "armed=true" >> "$GITHUB_OUTPUT"
-            echo "reason=$reason" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
+          # Manual runs also require the armed release request below.
           schema="$(jq -r '.schema // 0' .deploy/production-request.json)"
           deploy="$(jq -r '.deploy // false' .deploy/production-request.json)"
           reason="$(jq -r '.reason // "production-request"' .deploy/production-request.json)"
@@ -49,6 +43,16 @@ jobs:
             echo "armed=false" >> "$GITHUB_OUTPUT"
             echo "reason=not-armed" >> "$GITHUB_OUTPUT"
             exit 0
+          fi
+          request_id="$(jq -r '.request_id // ""' .deploy/production-request.json)"
+          approval_reference="$(jq -r '.approval_reference // ""' .deploy/production-request.json)"
+          if ! [[ "$request_id" =~ ^[A-Za-z0-9._:-]+$ ]]; then
+            echo "Invalid production release request_id." >&2
+            exit 1
+          fi
+          if [ -z "$approval_reference" ] || [ "$approval_reference" = "null" ]; then
+            echo "Missing recorded client approval for public release." >&2
+            exit 1
           fi
           echo "armed=true" >> "$GITHUB_OUTPUT"
           echo "reason=$reason" >> "$GITHUB_OUTPUT"
@@ -128,7 +132,7 @@ jobs:
       - name: Validate public snapshot
         if: steps.request.outputs.armed == 'true'
         shell: bash
-        run: node gateway/verify-production.mjs "$SNAPSHOT_DIR"
+        run: node gateway/verify-production.mjs "$SNAPSHOT_DIR" --require-live-stripe
 
       - name: Stage static assets
         if: steps.request.outputs.armed == 'true'
