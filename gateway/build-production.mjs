@@ -18,7 +18,11 @@ async function exists(path) {
 function replaceSectionContaining(html, needle, replacement) {
   const needleIndex = html.indexOf(needle);
   if (needleIndex < 0) return html;
-  const start = html.lastIndexOf('<section class="section">', needleIndex);
+  let start = -1;
+  for (const match of html.matchAll(/<section\\b[^>]*>/giu)) {
+    if (match.index > needleIndex) break;
+    start = match.index;
+  }
   const end = html.indexOf("</section>", needleIndex);
   if (start < 0 || end < 0) throw new Error(`Could not isolate section containing: ${needle}`);
   return html.slice(0, start) + replacement + html.slice(end + "</section>".length);
