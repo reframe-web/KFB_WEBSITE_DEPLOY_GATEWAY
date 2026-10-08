@@ -68,8 +68,10 @@ function pageHtml(item, lang) {
   const altUrl = item[`url_${otherLang}`];
   const canonical = `https://kfbokinawa.org${url}`;
   const alternate = `https://kfbokinawa.org${altUrl}`;
-  const publicSafe = item.status === "published" && item.privacy === "public_safe";
-  const robots = publicSafe ? "index,follow" : "noindex,nofollow,noarchive";
+  // All review/preview pages remain non-indexable, even if an approval is recorded.
+  // Only the separate verified public build may switch them to indexable content.
+  const publicSafe = false;
+  const robots = "noindex,nofollow,noarchive";
   const description = stripHtml(excerpt || bodyRaw || title).slice(0, 155);
   const date = dateText(item.published_at, lang);
   const label = typeLabel[lang][item.type] || (isEn ? "Archive" : "活動記録");
