@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-about-promise-copy-20261008-01",
-  "reason": "Publish approved JA and EN About Our Promise copy from Google Drive source to password-protected noindex review preview only."
+  "deploy": false,
+  "request_id": "kfb-about-promise-copy-20261008-01-complete",
+  "reason": "Protected preview refresh requested, run 104."
 }
