@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-support-ticket-no-crop-20261008-01",
-  "reason": "Refresh password-protected noindex preview after Drive CSS fix: display entire square support-ticket artwork without crop at desktop sizes. No production release."
+  "deploy": false,
+  "request_id": "kfb-support-ticket-no-crop-20261008-01-complete",
+  "reason": "Protected support-ticket no-crop preview requested in run 108; immediately disarmed. Production remains disabled."
 }
