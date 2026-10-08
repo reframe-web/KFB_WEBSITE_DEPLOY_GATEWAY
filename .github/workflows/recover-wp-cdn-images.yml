@@ -1,0 +1,68 @@
+name: Recover KFB WordPress originals to encrypted artifact
+on:
+  push:
+    paths:
+      - "gateway/recover-wp-cdn-images.py"
+      - ".github/workflows/recover-wp-cdn-images.yml"
+permissions:
+  contents: read
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DRIVE_SOURCE_FOLDER_ID: "1nIQrLm5e2mXIAAyE6pF-SdxSuiOhqyV8"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Download canonical KFB source with read-only Drive credentials
+        env:
+          GDRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          echo "SNAPSHOT_DIR=$RUNNER_TEMP/kfb-drive-source" >> "$GITHUB_ENV"
+          SNAPSHOT_DIR="$RUNNER_TEMP/kfb-drive-source" node gateway/fetch-drive-source.mjs
+      - name: Fetch archived image URLs into ephemeral runner
+        run: python3 gateway/recover-wp-cdn-images.py
+      - name: End-to-end encrypt recovered photos before any upload
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/kfb-encrypted-artifact"
+          cat > "$RUNNER_TEMP/kfb-recovery-public.pem" <<'PUBKEY'
+-----BEGIN PUBLIC KEY-----
+MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAsSiF1J2Ejbd2xkdG23s6
+Lk/15bB7WbI3W1x17ilQ3jHteiOfcIo2ixYj0xI4x6vOvxt5dzd9uK2Ryi3oaf4r
+uFD1Hd772jPHl3rRoTJMgZiyBejgaka2z66KF5HXI4LTA1U1DvzTPVGRx3b0Bnnf
+BQAaWNn8B12TQGPTtFYM/1QOGfMKCdL3+aB7MU8OaU7scIdBw9qx8i6ZJrvt7MPS
+p2vjG0zbZGuSEF61i4VUI0qSRphHB5xI3PZ9Jwln6mL+zudz1/yW4BVAWwkJt9h5
+wZjcvWjr4yG/vx4sKpVMSdr/wSEJtUvJea5NEC37Ux2TgUSS0/4i+BSh08JfIogN
+OVVjZuQF5Q3CfXo6T+QlsB6+FArK04JQjvDtBTfPg7l3UliNM0GrKa/T3Z1oO62z
+vwuXTSITycj3qBkpOmfx6bstfyVyTtnIGzfKEBS/BikNNeeiQFspzYqtqVAPtxMJ
+PYyXXAyJej/1//S+qher11lPO4ZLF6Ea+k9uEouArMZvAgMBAAE=
+-----END PUBLIC KEY-----
+PUBKEY
+          openssl rand -hex 32 > "$RUNNER_TEMP/kfb-recovery-password"
+          openssl enc -aes-256-cbc -salt -pbkdf2 -iter 220000 \
+            -in "$RUNNER_TEMP/wp-photo-recovery.zip" \
+            -out "$RUNNER_TEMP/kfb-encrypted-artifact/photos.zip.enc" \
+            -pass file:"$RUNNER_TEMP/kfb-recovery-password"
+          openssl pkeyutl -encrypt -pubin -inkey "$RUNNER_TEMP/kfb-recovery-public.pem" \
+            -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256 \
+            -in "$RUNNER_TEMP/kfb-recovery-password" \
+            -out "$RUNNER_TEMP/kfb-encrypted-artifact/password.key.enc"
+          rm -rf "$RUNNER_TEMP/wp-photo-recovery" "$RUNNER_TEMP/wp-photo-recovery.zip" \
+            "$RUNNER_TEMP/kfb-recovery-password" "$RUNNER_TEMP/kfb-recovery-public.pem" \
+            "$RUNNER_TEMP/kfb-drive-source"
+          echo "Only RSA-wrapped AES-256 encrypted files remain in artifact stage."
+      - name: Upload encrypted artifact only
+        uses: actions/upload-artifact@v4
+        with:
+          name: kfb-wp-encrypted-originals
+          path: ${{ runner.temp }}/kfb-encrypted-artifact/*.enc
+          retention-days: 1
+          if-no-files-found: error
+      - name: Remove encrypted staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/kfb-encrypted-artifact" "$RUNNER_TEMP/wp-photo-recovery" "$RUNNER_TEMP/wp-photo-recovery.zip"
