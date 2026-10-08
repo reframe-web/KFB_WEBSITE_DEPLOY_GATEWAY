@@ -1,6 +1,6 @@
 {
   "schema": 1,
   "deploy": true,
-  "request_id": "kfb-client-legacy-201-review-20261008-03",
-  "reason": "Protected client review after robots/canonical public validation bug fix; no public launch"
+  "request_id": "kfb-client-legacy-201-review-20261008-04",
+  "reason": "Refresh protected legacy client review with verified YouTube-only Tsuku2 article and final 201-row check list"
 }
