@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-2023-year-to-archive-crosslink-20261008-02",
-  "reason": "Preview only: 2023 JA/EN annual report links to unapproved historic report are visibly available for client review; production builder strips data-kfb-review-only links and must pass public fail-closed validation."
+  "deploy": false,
+  "request_id": "kfb-2023-year-to-archive-crosslink-20261008-02-complete",
+  "reason": "Protected preview run #102 success; JA/EN 2023 annual links to client-review-only article; public release strips preview-only links and withholds all unapproved legacy items."
 }
