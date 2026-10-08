@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-finance-review-static-hygiene-20261008-03",
-  "reason": "Refresh protected KFB site from Drive source: legacy 2023 accounting report date correction and FY2018 JA SEO metadata; preserve Basic Auth, robots Disallow and noindex; no payment edits"
+  "deploy": false,
+  "request_id": "kfb-finance-review-static-hygiene-20261008-03-done",
+  "reason": "Protected review deployment run #88 succeeded; no public release approved and deployment request is disarmed"
 }
