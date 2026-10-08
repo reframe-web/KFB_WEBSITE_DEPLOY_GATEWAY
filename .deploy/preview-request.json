@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-client-legacy-201-review-20261008-04",
-  "reason": "Refresh protected legacy client review with verified YouTube-only Tsuku2 article and final 201-row check list"
+  "deploy": false,
+  "request_id": "kfb-client-legacy-201-review-20261008-04-done",
+  "reason": "Protected 201-item client-review deployment succeeded. Public launch remains disabled; preserve Basic Auth/noindex."
 }
