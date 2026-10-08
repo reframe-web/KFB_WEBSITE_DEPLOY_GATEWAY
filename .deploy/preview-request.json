@@ -1,6 +1,6 @@
 {
   "schema": 1,
   "deploy": true,
-  "request_id": "kfb-client-legacy-201-review-20261008-02",
-  "reason": "Retry private client preview following production section parser safety fix; keep password and noindex"
+  "request_id": "kfb-client-legacy-201-review-20261008-03",
+  "reason": "Protected client review after robots/canonical public validation bug fix; no public launch"
 }
