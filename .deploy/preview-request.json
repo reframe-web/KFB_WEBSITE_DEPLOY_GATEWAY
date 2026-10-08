@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-about-promise-privacy-copy-20261008-02-complete",
-  "reason": "Protected JA/EN About copy refresh triggered in run 106; request disarmed. Production deployment remains disabled."
+  "deploy": true,
+  "request_id": "kfb-support-ticket-no-crop-20261008-01",
+  "reason": "Refresh password-protected noindex preview after Drive CSS fix: display entire square support-ticket artwork without crop at desktop sizes. No production release."
 }
