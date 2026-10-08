@@ -45,7 +45,13 @@ function transformHtml(html, rel) {
 
   // Review-only Drive links may point to unapproved historical articles.
   // Never expose those links in an unauthenticated public build.
-  out = out.replace(/<a\b(?=[^>]*\bdata-kfb-review-only\s*=)[^>]*>[\s\S]*?<\/a>/giu, "");
+  out = out.replace(/<a\b(?=[^>]*\bdata-kfb-review-only\s*=)[^>]*>[\s\S]*?<\/a>/giu, (anchor) => {
+    const m = anchor.match(/\bdata-kfb-review-only\s*=\s*["'](legacy-[A-Za-z0-9._-]+)["']/iu);
+    if (!m) throw new Error("Malformed review-only link in " + rel);
+    const articleId = m[1] === "legacy-8692" ? "legacy-tsukutsuku-8692" : m[1];
+    if (eligible.has(articleId)) return anchor.replace(/\sdata-kfb-review-only\s*=\s*["'][^"']+["']/iu, "");
+    return "";
+  });
   if (out.includes("data-kfb-review-only")) {
     throw new Error(`Unremoved review-only link in public page: ${rel}`);
   }
