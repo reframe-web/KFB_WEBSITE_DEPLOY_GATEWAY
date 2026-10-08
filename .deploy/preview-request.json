@@ -1,6 +1,6 @@
 {
   "schema": 1,
   "deploy": true,
-  "request_id": "kfb-original-photo-restoration-20261008-05",
-  "reason": "Protected review: restore 26 original WP CDN photos and original 2024 accounting image, client review 151 ready / 50 original-photo gaps; no public launch"
+  "request_id": "kfb-legacy-photo-recovery-verified-20261008-06",
+  "reason": "Rebuild protected client review with 155 article candidates and 46 photo-incomplete after original-URL and nonphoto audit; no public launch"
 }
