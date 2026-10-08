@@ -95,6 +95,44 @@ jobs:
         shell: bash
         run: node gateway/fetch-drive-source.mjs
 
+      - name: Restore original legacy photos from Drive-owned review bundles
+        if: steps.request.outputs.armed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os, pathlib, shutil, zipfile
+          root = pathlib.Path(os.environ["SNAPSHOT_DIR"]).resolve()
+          bundle_dir = root / "data" / "legacy-media-bundles"
+          count = 0
+          if bundle_dir.is_dir():
+              bundles = sorted(bundle_dir.glob("kfb-review-media-*.zip"))
+              if not bundles:
+                  raise RuntimeError("Legacy photo bundle directory is empty")
+              for bundle in bundles:
+                  with zipfile.ZipFile(bundle) as z:
+                      for info in z.infolist():
+                          if info.is_dir():
+                              continue
+                          path = pathlib.PurePosixPath(info.filename)
+                          if (len(path.parts) != 4 or path.parts[0:2] != ("assets", "legacy")
+                              or not path.parts[2].startswith("legacy-")
+                              or path.suffix != ".webp" or ".." in path.parts
+                              or info.file_size > 6 * 1024 * 1024):
+                              raise RuntimeError("Unsafe legacy media bundle entry")
+                          target = root.joinpath(*path.parts).resolve()
+                          if not target.is_relative_to(root):
+                              raise RuntimeError("Legacy media entry outside site root")
+                          target.parent.mkdir(parents=True, exist_ok=True)
+                          if target.exists():
+                              raise RuntimeError("Duplicate legacy media entry")
+                          with z.open(info) as source, target.open("wb") as out:
+                              shutil.copyfileobj(source, out)
+                          count += 1
+              shutil.rmtree(bundle_dir)
+          print(f"Restored {count} review-only media files from Drive")
+          PY
+
       - name: Generate bilingual legacy archive pages
         if: steps.request.outputs.armed == 'true'
         shell: bash
@@ -109,6 +147,26 @@ jobs:
         if: steps.request.outputs.armed == 'true'
         shell: bash
         run: node gateway/verify-source.mjs "$SNAPSHOT_DIR"
+
+      - name: Test public legacy approval gate without deploying it
+        if: steps.request.outputs.armed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check gateway/build-production.mjs
+          stage="$RUNNER_TEMP/kfb-production-safety-test"
+          cp -a "$SNAPSHOT_DIR" "$stage"
+          node gateway/build-production.mjs "$stage"
+          if [ -e "$stage/ja/activities/archive/legacy-tsukutsuku-19116/index.html" ]; then
+            echo "Unapproved article still present in simulated public output" >&2
+            exit 1
+          fi
+          if [ -d "$stage/assets/legacy/legacy-tsukutsuku-19116" ]; then
+            echo "Unapproved images still present in simulated public output" >&2
+            exit 1
+          fi
+          node -e 'const f=require(process.argv[1]); if(f.items.length!==0) process.exit(1)' "$stage/data/legacy-feed.json"
+          rm -rf "$stage"
 
       - name: Stage ephemeral static assets
         if: steps.request.outputs.armed == 'true'
