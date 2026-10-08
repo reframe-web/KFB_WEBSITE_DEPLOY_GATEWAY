@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-activities-desktop-20261005-01-done",
-  "reason": "Deployment completed successfully; request disarmed"
+  "deploy": true,
+  "request_id": "kfb-final-quality-fixes-20261008-01",
+  "reason": "Deploy Drive-canonical FY2024 corrections, annual SEO tags, sitemap coverage and CSS hygiene; preserve Basic Authentication and noindex"
 }
