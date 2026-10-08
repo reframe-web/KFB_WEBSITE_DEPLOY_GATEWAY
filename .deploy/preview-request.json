@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-client-legacy-201-review-20261008-04-done",
-  "reason": "Protected 201-item client-review deployment succeeded. Public launch remains disabled; preserve Basic Auth/noindex."
+  "deploy": true,
+  "request_id": "kfb-original-photo-restoration-20261008-05",
+  "reason": "Protected review: restore 26 original WP CDN photos and original 2024 accounting image, client review 151 ready / 50 original-photo gaps; no public launch"
 }
