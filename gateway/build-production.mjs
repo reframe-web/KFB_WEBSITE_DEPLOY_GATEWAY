@@ -141,7 +141,7 @@ if (publicItems.length !== eligible.size) {
   throw new Error("Approved legacy items missing or duplicated in legacy feed.");
 }
 for (const parts of [
-  ["data", "legacy-preview.json"], ["ja", "review"], ["en", "review"],
+  ["data", "legacy-preview.json"], ["data", "legacy-media-bundles"], ["ja", "review"], ["en", "review"],
   ["ja", "activities", "legacy"], ["en", "activities", "legacy"],
 ]) await rm(pathInRoot(...parts), { recursive: true, force: true });
 const publicLegacyFeed = {
