@@ -22,3 +22,18 @@ jobs:
             curl --location --silent --show-error --max-time 18 --head \
                  --output /dev/null --write-out 'HTTP %{http_code}; content_type %{content_type}; remote_ip %{remote_ip}; redirect %{redirect_url}\n' "$url" || :
           done
+          echo 'ARCHIVE CDX exact image:'
+          curl --location --silent --show-error --max-time 25 \
+            --get 'https://web.archive.org/cdx/search/cdx' \
+            --data-urlencode 'url=web-resource.tsuku2.jp/pic/blog/0000086504/a070a5cf7084d853f9dc2f6907f8f798.jpg' \
+            --data-urlencode 'output=json' \
+            --data-urlencode 'filter=statuscode:200' | head -c 800 || :
+          echo
+          echo 'ARCHIVE CDX prefix (first entries only):'
+          curl --location --silent --show-error --max-time 30 \
+            --get 'https://web.archive.org/cdx/search/cdx' \
+            --data-urlencode 'url=web-resource.tsuku2.jp/pic/blog/0000086504/*' \
+            --data-urlencode 'output=json' \
+            --data-urlencode 'filter=statuscode:200' \
+            --data-urlencode 'collapse=urlkey' | head -c 1000 || :
+          echo
