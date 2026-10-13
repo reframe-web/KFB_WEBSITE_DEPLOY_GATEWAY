@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-restore-official-email-20261013-02",
-  "reason": "Reapply corrected KFB original official Gmail on private preview after fixing stale denylist that falsely prohibited the original address; protected-only."
+  "deploy": false,
+  "request_id": "kfb-restore-official-email-20261013-02-completed",
+  "reason": "KFB original official contact restored on eight JA/EN canonical Drive pages; publication rules corrected; preview deploy #115 run 38336589354 completed success; general production deploy remains disabled."
 }
