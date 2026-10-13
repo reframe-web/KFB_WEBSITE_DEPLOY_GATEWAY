@@ -65,7 +65,7 @@ function transformHtml(html, rel) {
     return '<link rel="canonical" href="' + href + '">';
   });
 
-  out = out.replaceAll("kfokinawa@gmail.com", "info@kfbokinawa.org");
+  out = out.replaceAll("info@kfbokinawa.org", "kfokinawa@gmail.com");
   out = out.replaceAll("Private pre-release preview", "");
   out = out.replaceAll("公開前プレビュー：検索エンジン非公開", "");
   out = out.replaceAll("公開前プレビュー", "");
