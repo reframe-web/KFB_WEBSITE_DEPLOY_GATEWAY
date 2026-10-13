@@ -158,6 +158,20 @@ for (const rel of normalizedPaths) {
   if (!pathSet.has(alternate)) {
     throw new Error(`Bilingual page missing: ${rel} requires ${alternate}`);
   }
+  if (/^(?:ja|en)\/activities\/[^/]+\/index\.html$/u.test(rel)) {
+    const html = await readFile(join(root, ...rel.split("/")), "utf8");
+    const route = rel.slice(2).replace(/index\.html$/u, "");
+    for (const lang of ["ja", "en"]) {
+      const expected = "/" + lang + route;
+      const alternateHref = new RegExp('hreflang="' + lang + '"\\s+href="[^"]+' + expected.replace(/[.*+?^${}()|[\]\\]/gu, '\\  if (!pathSet.has(alternate)) {
+    throw new Error(`Bilingual page missing: ${rel} requires ${alternate}`);
+  }
+') + '"', "u");
+      if (!alternateHref.test(html)) {
+        throw new Error(`Incomplete reciprocal hreflang on ${rel}: ${expected}`);
+      }
+    }
+  }
 }
 
 // Normal and protected-review editorial feeds must both be language-complete.
