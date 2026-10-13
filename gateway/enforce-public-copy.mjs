@@ -138,7 +138,7 @@ function rewriteSiteChrome(html, rel) {
   const langHref = langMatch?.[1] ?? (isJa ? "/en/" : "/ja/");
   const langLabel = isJa ? "English" : "日本語";
   const section = rel.split("/")[1] ?? "";
-  const annualReport = /^(?:ja|en)\/activities\/(?:2018|2022|2023|2024)\/index\.html$/u.test(rel);
+  const annualReport = /^(?:ja|en)\/activities\/[12][0-9]{3}\/index\.html$/u.test(rel);
 
   const nav = siteNavigation.navigation[lang]
     .map((item) => navLink(item, isCurrentNavItem(item, section, annualReport)))
