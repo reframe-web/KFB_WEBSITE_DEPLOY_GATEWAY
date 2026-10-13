@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-bilingual-gate-fy2025-en-review-20261013-02",
-  "reason": "Re-run protected bilingual FY2025 deployment after fixing attribute-order independent reciprocal hreflang validation; do not publish unprotected site."
+  "deploy": false,
+  "request_id": "kfb-bilingual-gate-fy2025-en-review-20261013-02-completed",
+  "reason": "JA/EN paired FY2025 financial report, bilingual financial hub / updates and mandatory Publisher validation deployed successfully to password-protected review in Actions #118 run 38338541035. Production release remains disabled."
 }
