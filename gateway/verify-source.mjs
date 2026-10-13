@@ -182,4 +182,17 @@ if (await exists(legacyPreviewPath)) {
   console.log(`KFB bilingual legacy archive passed: ${generatedArchiveItems} translated archive items / ${generatedArchiveItems * 2} generated language pages.`);
 }
 
+// KFB's existing official contact address must never be silently replaced.
+for (const rel of [
+  "ja/index.html", "en/index.html",
+  "ja/about/index.html", "en/about/index.html",
+  "ja/contact/index.html", "en/contact/index.html",
+  "ja/privacy/index.html", "en/privacy/index.html",
+]) {
+  const contents = await readFile(join(root, ...rel.split("/")), "utf8");
+  if (!contents.includes("kfokinawa@gmail.com") || contents.includes("info@kfbokinawa.org")) {
+    throw new Error("KFB legacy-confirmed official contact email was changed without approval: " + rel);
+  }
+}
+
 console.log(`KFB source validation passed: ${files.length} source files, ${htmlCount} source HTML documents before generated archive counting.`);
