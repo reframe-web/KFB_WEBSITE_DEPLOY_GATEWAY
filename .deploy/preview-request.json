@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-restore-official-email-20261013-02-completed",
-  "reason": "KFB original official contact restored on eight JA/EN canonical Drive pages; publication rules corrected; preview deploy #115 run 38336589354 completed success; general production deploy remains disabled."
+  "deploy": true,
+  "request_id": "kfb-bilingual-gate-fy2025-en-review-20261013-01",
+  "reason": "Protected JA+EN FY2025 financial pages, EN financial hub, EN TOP/latest feed, mandatory bilingual HTML/feed + hreflang validation, no production/public release."
 }
