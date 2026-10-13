@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-support-ticket-no-crop-20261008-01-complete",
-  "reason": "Protected support-ticket no-crop preview requested in run 108; immediately disarmed. Production remains disabled."
+  "deploy": true,
+  "request_id": "kfb-2025-financial-html-review-20261013-01",
+  "reason": "Deploy new FY2025 KFB financial HTML report and JA annual financial listing to password-protected noindex review only; no public launch."
 }
