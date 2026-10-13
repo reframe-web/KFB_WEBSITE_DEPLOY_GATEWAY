@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-2025-latest-private-review-20261013-01-complete",
-  "reason": "Protected FY2025 latest-update preview deployed and validated: run 38334911631; production remains disabled."
+  "deploy": true,
+  "request_id": "kfb-restore-official-email-20261013-01",
+  "reason": "Urgent restore kfokinawa@gmail.com as KFB original official site contact on JA/EN eight core pages, protected preview only; preserve password/noindex; prevent forced substitution."
 }
