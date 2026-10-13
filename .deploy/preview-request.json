@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-2025-financial-html-review-20261013-01-complete",
-  "reason": "Protected FY2025 KFB HTML financial report deployed successfully in run 38333750769 attempt 2; production request remains disabled."
+  "deploy": true,
+  "request_id": "kfb-2025-latest-private-review-20261013-01",
+  "reason": "Add FY2025 financial report to private review Latest Updates only; preserve auth/noindex and exclude preview feed from public snapshot."
 }
