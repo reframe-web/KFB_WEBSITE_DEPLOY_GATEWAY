@@ -185,8 +185,8 @@ jobs:
             if [ "$path" != "/sitemap.xml" ]; then ! grep -Fiq "noindex,nofollow" "$RUNNER_TEMP/page"; fi
           done
 
-          curl -fsS "$origin/ja/contact/" | grep -Fq "info@kfbokinawa.org"
-          curl -fsS "$origin/en/contact/" | grep -Fq "info@kfbokinawa.org"
+          curl -fsS "$origin/ja/contact/" | grep -Fq "kfokinawa@gmail.com"
+          curl -fsS "$origin/en/contact/" | grep -Fq "kfokinawa@gmail.com"
           curl -fsS "$origin/ja/support/" -o "$RUNNER_TEMP/ja-support.html"
           curl -fsS "$origin/en/support/" -o "$RUNNER_TEMP/en-support.html"
           for lang in ja en; do
