@@ -127,19 +127,70 @@ for (const item of contentIndex.items) {
   if (!allowedContentTypes.has(item.type)) throw new Error(`Unsupported unified-content type: ${item.type}`);
   if (!allowedStatuses.has(item.status)) throw new Error(`Non-published item must not be in deployable content index: ${item.id}`);
   if (!allowedPrivacy.has(item.privacy)) throw new Error(`Unsafe privacy state in deployable content index: ${item.id}`);
-  if (!item.title_ja || !item.url_ja || !Array.isArray(item.tags)) throw new Error(`Incomplete unified-content item: ${item.id}`);
+  for (const lang of ["ja", "en"]) {
+    for (const field of ["title", "excerpt", "url"]) {
+      if (typeof item[field + "_" + lang] !== "string" || !item[field + "_" + lang].trim()) {
+        throw new Error(`Incomplete bilingual content (${field}_${lang}): ${item.id}`);
+      }
+    }
+  }
+  if (!Array.isArray(item.tags)) throw new Error(`Missing content tags: ${item.id}`);
   if (item.published_at !== null && item.published_at !== undefined && !/^\d{4}-\d{2}-\d{2}$/u.test(item.published_at)) {
     throw new Error(`Invalid published_at in unified-content item: ${item.id}`);
   }
 
   for (const [label, url] of [["ja", item.url_ja], ["en", item.url_en]]) {
-    if (!url) continue;
     if (!/^\/(?:ja|en)\/activities\/[A-Za-z0-9._-]+\/$/u.test(url)) {
       throw new Error(`Unsafe ${label} unified-content URL in ${item.id}: ${url}`);
     }
     const target = join(root, ...url.replace(/^\//u, "").split("/").filter(Boolean), "index.html");
     if (!(await exists(target))) throw new Error(`Unified-content URL has no HTML page: ${url}`);
   }
+}
+
+// All human-facing language routes must have the matching route in both languages.
+// The legacy /ja/review/ compatibility redirect is an intentionally private exception.
+const pathSet = new Set(normalizedPaths);
+for (const rel of normalizedPaths) {
+  const match = /^(ja|en)\/(.*\/)?index\.html$/u.exec(rel);
+  if (!match || /^(?:ja|en)\/review\//u.test(rel)) continue;
+  const alternate = (match[1] === "ja" ? "en" : "ja") + "/" + (match[2] ?? "") + "index.html";
+  if (!pathSet.has(alternate)) {
+    throw new Error(`Bilingual page missing: ${rel} requires ${alternate}`);
+  }
+}
+
+// Normal and protected-review editorial feeds must both be language-complete.
+const protectedFeedPath = join(root, "data", "preview-content.json");
+if (await exists(protectedFeedPath)) {
+  const protectedText = await readFile(protectedFeedPath, "utf8");
+  const protectedFeed = JSON.parse(protectedText.replace(/^\uFEFF/u, ""));
+  if (protectedFeed.schema !== 1 || !Array.isArray(protectedFeed.items)) {
+    throw new Error("Invalid protected bilingual review feed schema.");
+  }
+  const seenReview = new Set();
+  for (const item of protectedFeed.items) {
+    if (!item?.id || seenReview.has(item.id)) throw new Error("Invalid/duplicate protected review item");
+    seenReview.add(item.id);
+    if (item.preview_only !== true || item.status !== "approved_for_preview" || item.privacy !== "review_required") {
+      throw new Error(`Unsafe protected review item state: ${item.id}`);
+    }
+    for (const lang of ["ja", "en"]) {
+      for (const field of ["title", "excerpt", "url"]) {
+        if (typeof item[field + "_" + lang] !== "string" || !item[field + "_" + lang].trim()) {
+          throw new Error(`Protected review translation missing: ${field}_${lang} for ${item.id}`);
+        }
+      }
+      const url = item["url_" + lang];
+      if (!new RegExp("^/" + lang + "/activities/[A-Za-z0-9._-]+/$", "u").test(url)) {
+        throw new Error(`Invalid protected review URL: ${url}`);
+      }
+      if (!(await exists(join(root, ...url.split("/").filter(Boolean), "index.html")))) {
+        throw new Error(`Protected review HTML missing for ${item.id}: ${url}`);
+      }
+    }
+  }
+  console.log(`KFB bilingual protected review items passed: ${protectedFeed.items.length}`);
 }
 
 console.log(`KFB unified content index passed: ${contentIndex.items.length} published items.`);
