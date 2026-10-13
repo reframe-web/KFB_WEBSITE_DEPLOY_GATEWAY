@@ -82,7 +82,7 @@ const forbidden = [
   /原本確認済み/iu,
   /会計画像確認中/iu,
   /同じ正本から更新/iu,
-  /kfokinawa@gmail\.com/iu,
+  /info@kfbokinawa\.org/iu,
 ];
 
 const htmlFiles = [];
