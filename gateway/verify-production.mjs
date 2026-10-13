@@ -110,7 +110,7 @@ for (const file of htmlFiles) {
 
 for (const rel of ["ja/contact/index.html","en/contact/index.html"]) {
   const body = await readFile(join(root, ...rel.split("/")), "utf8");
-  if (!body.includes("info@kfbokinawa.org")) throw new Error(`Domain contact email missing: ${rel}`);
+  if (!body.includes("kfokinawa@gmail.com") || body.includes("info@kfbokinawa.org")) throw new Error(`Original KFB contact email missing or improperly replaced: ${rel}`);
 }
 
 const jaSupport = await readFile(join(root, "ja", "support", "index.html"), "utf8");
