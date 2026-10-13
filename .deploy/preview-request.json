@@ -1,6 +1,6 @@
 {
   "schema": 1,
   "deploy": true,
-  "request_id": "kfb-restore-official-email-20261013-01",
-  "reason": "Urgent restore kfokinawa@gmail.com as KFB original official site contact on JA/EN eight core pages, protected preview only; preserve password/noindex; prevent forced substitution."
+  "request_id": "kfb-restore-official-email-20261013-02",
+  "reason": "Reapply corrected KFB original official Gmail on private preview after fixing stale denylist that falsely prohibited the original address; protected-only."
 }
