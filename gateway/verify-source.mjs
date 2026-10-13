@@ -163,10 +163,7 @@ for (const rel of normalizedPaths) {
     const route = rel.slice(2).replace(/index\.html$/u, "");
     for (const lang of ["ja", "en"]) {
       const expected = "/" + lang + route;
-      const alternateHref = new RegExp('hreflang="' + lang + '"\\s+href="[^"]+' + expected.replace(/[.*+?^${}()|[\]\\]/gu, '\\  if (!pathSet.has(alternate)) {
-    throw new Error(`Bilingual page missing: ${rel} requires ${alternate}`);
-  }
-') + '"', "u");
+      const alternateHref = new RegExp('hreflang="' + lang + '"\\s+href="https?://[^"]+' + expected + '"', "u");
       if (!alternateHref.test(html)) {
         throw new Error(`Incomplete reciprocal hreflang on ${rel}: ${expected}`);
       }
