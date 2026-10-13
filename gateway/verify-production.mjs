@@ -24,7 +24,7 @@ for (const rel of required) {
 }
 
 for (const rel of [
-  "data/legacy-preview.json","ja/review","en/review",
+  "data/preview-content.json", "data/legacy-preview.json","ja/review","en/review",
   "ja/activities/legacy","en/activities/legacy"
 ]) {
   if (await exists(join(root, ...rel.split("/")))) throw new Error(`Preview-only path remains: ${rel}`);
