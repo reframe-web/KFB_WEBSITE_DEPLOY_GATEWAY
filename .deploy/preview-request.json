@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-stripe-live-8plans-protected-20261015-01",
-  "reason": "Update JA/EN KFB support checkout to eight verified Stripe live Payment Links from canonical Google Drive; preserve Basic Auth, noindex and public-release disarm."
+  "deploy": false,
+  "request_id": "kfb-stripe-live-8plans-protected-20261015-01-completed",
+  "reason": "Protected Stripe live 8-plan site deploy #120 run 38668893265 SUCCESS, JA/EN checkout configured. Keep production deploy disarmed and Basic Auth/noindex."
 }
