@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-bilingual-gate-fy2025-en-review-20261013-02-completed",
-  "reason": "JA/EN paired FY2025 financial report, bilingual financial hub / updates and mandatory Publisher validation deployed successfully to password-protected review in Actions #118 run 38338541035. Production release remains disabled."
+  "deploy": true,
+  "request_id": "kfb-stripe-live-8plans-protected-20261015-01",
+  "reason": "Update JA/EN KFB support checkout to eight verified Stripe live Payment Links from canonical Google Drive; preserve Basic Auth, noindex and public-release disarm."
 }
