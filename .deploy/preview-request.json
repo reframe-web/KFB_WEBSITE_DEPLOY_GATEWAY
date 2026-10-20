@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-jcb-terms-protected-20261020-01",
-  "reason": "Refresh JA/EN donation year-round and refund policy text from Drive, preserve Basic Auth/noindex; no public release."
+  "deploy": false,
+  "request_id": "kfb-jcb-terms-protected-20261020-01-completed",
+  "reason": "Protected JA/EN donation terms deploy GitHub Actions run 39369968403 attempt 2 SUCCESS. Basic Auth/noindex remain enabled; public production request still disarmed."
 }
