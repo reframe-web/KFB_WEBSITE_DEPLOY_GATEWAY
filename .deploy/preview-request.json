@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-stripe-live-8plans-protected-20261015-01-completed",
-  "reason": "Protected Stripe live 8-plan site deploy #120 run 38668893265 SUCCESS, JA/EN checkout configured. Keep production deploy disarmed and Basic Auth/noindex."
+  "deploy": true,
+  "request_id": "kfb-jcb-terms-protected-20261020-01",
+  "reason": "Refresh JA/EN donation year-round and refund policy text from Drive, preserve Basic Auth/noindex; no public release."
 }
