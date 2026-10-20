@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-jcb-legal-protected-20261020-01",
-  "reason": "Deploy JA EN commerce disclosure and homepage/support footer links in password-protected noindex environment"
+  "deploy": false,
+  "request_id": "kfb-jcb-legal-protected-20261020-01-completed",
+  "reason": "Protected JA EN commerce disclosure published; run 39392572119 SUCCESS. Basic Auth noindex intact. No public deployment authorized."
 }
