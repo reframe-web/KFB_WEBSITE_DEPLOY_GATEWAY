@@ -209,9 +209,9 @@ jobs:
           test "$(curl -sS -o /dev/null -w '%{http_code}' "$origin/ja/activities/archive/legacy-tsukutsuku-8692/")" = "$expected_8692"
 
           sitemap="$(curl -fsS "$origin/sitemap.xml")"
-          echo "$sitemap" | grep -Fq "https://kfbokinawa.org/ja/"
-          echo "$sitemap" | grep -Fq "https://kfbokinawa.org/en/"
-          ! echo "$sitemap" | grep -Eq '/review/|legacy-preview'
+          grep -Fq "https://kfbokinawa.org/ja/" <<< "$sitemap"
+          grep -Fq "https://kfbokinawa.org/en/" <<< "$sitemap"
+          ! grep -Eq '/review/|legacy-preview' <<< "$sitemap"
 
       - name: Summary
         if: steps.request.outputs.armed == 'true' && success()
