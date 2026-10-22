@@ -1,6 +1,7 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-production-safety-disarm-20261003-01",
-  "reason": "No unauthenticated public release is approved; keep production deploy request disarmed"
+  "deploy": true,
+  "request_id": "kfb-public-release-20261022-01",
+  "reason": "KFB full-site launch: remove password protection and noindex after client confirmation",
+  "approval_reference": "KFB client approved all website pages; project operator confirmed 2026-10-22 in ChatGPT KFB project"
 }
