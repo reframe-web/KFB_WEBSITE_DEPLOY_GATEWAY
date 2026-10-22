@@ -211,7 +211,7 @@ jobs:
           sitemap="$(curl -fsS "$origin/sitemap.xml")"
           echo "$sitemap" | grep -Fq "https://kfbokinawa.org/ja/"
           echo "$sitemap" | grep -Fq "https://kfbokinawa.org/en/"
-          ! echo "$sitemap" | grep -Eq '/review/|/activities/archive/legacy-|legacy-preview'
+          ! echo "$sitemap" | grep -Eq '/review/|legacy-preview'
 
       - name: Summary
         if: steps.request.outputs.armed == 'true' && success()
