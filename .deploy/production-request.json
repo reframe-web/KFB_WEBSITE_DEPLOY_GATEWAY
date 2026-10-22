@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-public-release-20261022-02-complete",
-  "reason": "Public release deployed and all live verification steps passed; deploy request disarmed",
+  "deploy": true,
+  "request_id": "kfb-jcb-legal-footer-20261022-01",
+  "reason": "Add JA EN commerce disclosure links to shared public footer; preserve current published pages and live Stripe donations",
   "approval_reference": "KFB client approved all website pages; project operator confirmed 2026-10-22 in ChatGPT KFB project"
 }
