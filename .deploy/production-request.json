@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-jcb-legal-footer-20261022-01-completed",
-  "reason": "Production run 39819513468 SUCCESS; JA and EN legal disclosure footer links verified live; public release state preserved",
-  "approval_reference": "KFB client approved all website pages; project operator confirmed 2026-10-22 in ChatGPT KFB project"
+  "deploy": true,
+  "request_id": "kfb-about-history-20261023-01",
+  "reason": "Publish bilingual About KFB founding story from archived legacy page-7, keeping historical statistics out of current copy",
+  "approval_reference": "KFB official website public approval confirmed 2026-10-22; project operator expressly requested fixed-page content addition and continuation 2026-10-23"
 }
