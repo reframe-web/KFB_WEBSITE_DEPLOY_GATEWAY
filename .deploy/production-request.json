@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": true,
-  "request_id": "kfb-about-history-20261023-01",
-  "reason": "Publish bilingual About KFB founding story from archived legacy page-7, keeping historical statistics out of current copy",
-  "approval_reference": "KFB official website public approval confirmed 2026-10-22; project operator expressly requested fixed-page content addition and continuation 2026-10-23"
+  "deploy": false,
+  "request_id": "kfb-about-history-20261023-01-completed",
+  "reason": "Production run 39887108001 SUCCESS: bilingual About KFB history published and live verified",
+  "approval_reference": "KFB public launch approved 2026-10-22; KFB fixed-page content addition requested 2026-10-23"
 }
