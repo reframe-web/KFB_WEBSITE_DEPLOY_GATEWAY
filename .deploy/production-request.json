@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-top-proposal-mobile-polish-20261106",
-  "reason": "Polish isolated KFB review TOP mobile typography, intentional line breaks, featured video player frame, and recommendation carousel; preserve /ja/ and noindex",
-  "approval_reference": "Operator feedback from two Android screenshots on 2026-11-06 in ongoing KFB official-domain client-review TOP design iteration"
+  "reason": "Mobile typography, featured player and recommendations layout updated on /top-proposal/; production run 42162615334 SUCCESS; noindex and official /ja/ homepage preserved",
+  "approval_reference": "Ongoing KFB client-review TOP iteration based on project operator's Android screenshot feedback 2026-11-06"
 }
