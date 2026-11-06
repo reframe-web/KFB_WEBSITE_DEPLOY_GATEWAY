@@ -28,11 +28,19 @@ export default {
       );
     }
 
+    if (url.pathname === "/top-proposal") {
+      return Response.redirect("https://kfbokinawa.org/top-proposal/", 302);
+    }
+
     const assetResponse = await env.ASSETS.fetch(request);
     const headers = securityHeaders(new Headers(assetResponse.headers));
     const contentType = headers.get("Content-Type") || "";
+    const clientTopProposal = url.pathname.startsWith("/top-proposal/");
 
-    if (contentType.includes("text/html")) {
+    if (clientTopProposal) {
+      headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+      headers.set("Cache-Control", "private, no-store");
+    } else if (contentType.includes("text/html")) {
       headers.set("Cache-Control", "public, max-age=0, must-revalidate");
     }
 
