@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-top-proposal-remove-design-study-20261106-retry2",
-  "reason": "Verify live client TOP proposal after removing visible design-study labels, using scope metadata, canonical and noindex checks",
+  "reason": "Release verification completed successfully, workflow run 42166991141",
   "approval_reference": "User explicitly requested removal of KFB DESIGN STUDY notice; official TOP remains unchanged"
 }
