@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-top-proposal-remove-design-study-20261106",
-  "reason": "Paused after verification rejected required visible KFB DESIGN STUDY marker; revise check to explicit metadata and unchanged noindex before retry",
-  "approval_reference": "User requested removal of KFB DESIGN STUDY banner on 2026-11-06"
+  "deploy": true,
+  "request_id": "kfb-top-proposal-remove-design-study-20261106-retry1",
+  "reason": "Remove top design-study strip and footer preview copy; validator now checks exact noindex, client-top-proposal scope meta, and preview canonical URL",
+  "approval_reference": "User requested removal of KFB DESIGN STUDY notice on 2026-11-06; corrective validation metadata-only, noindex preserved"
 }
