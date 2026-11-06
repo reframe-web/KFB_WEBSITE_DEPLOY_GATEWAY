@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-top-proposal-remove-design-study-20261106-retry2",
-  "reason": "Release verification completed successfully, workflow run 42166991141",
-  "approval_reference": "User explicitly requested removal of KFB DESIGN STUDY notice; official TOP remains unchanged"
+  "deploy": true,
+  "request_id": "kfb-top-proposal-complete-20261106-v1",
+  "reason": "Finish client-review TOP: public-safe activity updates, support impact and financial links, full organization footer, desktop/mobile polish; preserve five-video slider and official TOP",
+  "approval_reference": "User requested a complete TOP proposal based on comparisons and design feedback on 2026-11-06; changes are scoped to /top-proposal/"
 }
