@@ -185,6 +185,15 @@ jobs:
             if [ "$path" != "/sitemap.xml" ]; then ! grep -Fiq "noindex,nofollow" "$RUNNER_TEMP/page"; fi
           done
 
+          # Review-only TOP must be reachable, excluded from indexing and separate from the official homepage.
+          review_code="$(curl -sS -o "$RUNNER_TEMP/top-proposal.html" -D "$RUNNER_TEMP/top-proposal.headers" -w '%{http_code}' "$origin/top-proposal/")"
+          test "$review_code" = "200"
+          grep -Fq 'KFB DESIGN STUDY' "$RUNNER_TEMP/top-proposal.html"
+          grep -Fq 'content="noindex,nofollow,noarchive"' "$RUNNER_TEMP/top-proposal.html"
+          grep -Fiq 'x-robots-tag: noindex, nofollow, noarchive' "$RUNNER_TEMP/top-proposal.headers"
+          ! grep -Fq '/top-proposal/' "$RUNNER_TEMP/page"
+          curl -fsS "$origin/top-proposal/content/homepage-videos.json" | grep -Fq '"featured"'
+
           curl -fsS "$origin/ja/contact/" | grep -Fq "kfokinawa@gmail.com"
           curl -fsS "$origin/en/contact/" | grep -Fq "kfokinawa@gmail.com"
           curl -fsS "$origin/ja/support/" -o "$RUNNER_TEMP/ja-support.html"
