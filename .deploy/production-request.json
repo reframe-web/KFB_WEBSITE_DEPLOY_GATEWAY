@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-top-proposal-nav-20261106",
-  "reason": "Review TOP menu restoration verified live; production run 42161154971 SUCCESS, official /ja/ unchanged and /top-proposal/ noindex preserved",
-  "approval_reference": "KFB public launch approved 2026-10-22; project operator requested restoring original navigation on isolated client-review TOP on 2026-11-06"
+  "deploy": true,
+  "request_id": "kfb-top-proposal-mobile-polish-20261106",
+  "reason": "Polish isolated KFB review TOP mobile typography, intentional line breaks, featured video player frame, and recommendation carousel; preserve /ja/ and noindex",
+  "approval_reference": "Operator feedback from two Android screenshots on 2026-11-06 in ongoing KFB official-domain client-review TOP design iteration"
 }
