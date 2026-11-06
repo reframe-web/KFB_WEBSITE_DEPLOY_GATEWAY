@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-top-proposal-desktop-carousel-20261106",
-  "reason": "Client-review TOP: restore polished desktop horizontal carousel with visible next-card peek, refined arrows and typography; keep 390px mobile slider, formal /ja/, noindex",
-  "approval_reference": "User prefers the prior slider and asks to refine its design on 2026-11-06"
+  "reason": "Refined desktop carousel release run 42165239374 completed successfully; client-review TOP only, noindex and formal /ja/ preserved",
+  "approval_reference": "User preferred to retain the slider and refine the design on 2026-11-06"
 }
