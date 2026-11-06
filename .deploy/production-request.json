@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-top-proposal-icon-polish-20261106-v1",
-  "reason": "Polish semantic SVG icon system and mobile photo caption layout on the review-only KFB TOP proposal; preserve official TOP",
-  "approval_reference": "2026-11-06 user request: refine diagonal arrows and thoroughly polish review proposal"
+  "reason": "KFB TOP proposal icon polish release passed production verification; workflow run 42171650253",
+  "approval_reference": "User requested detailed icon/layout polish; official TOP remained unchanged"
 }
