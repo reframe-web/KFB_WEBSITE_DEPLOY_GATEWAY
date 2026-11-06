@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-top-proposal-mobile-polish-20261106",
-  "reason": "Mobile typography, featured player and recommendations layout updated on /top-proposal/; production run 42162615334 SUCCESS; noindex and official /ja/ homepage preserved",
-  "approval_reference": "Ongoing KFB client-review TOP iteration based on project operator's Android screenshot feedback 2026-11-06"
+  "deploy": true,
+  "request_id": "kfb-top-proposal-desktop-polish-20261106",
+  "reason": "Client-review /top-proposal/ desktop polish: narrower featured video, balanced typography, five-video centered gallery; mobile carousel and official /ja/ preserved; noindex remains",
+  "approval_reference": "User said 『やって』 on 2026-11-06 in response to the proposed desktop-specific refinement of /top-proposal/"
 }
