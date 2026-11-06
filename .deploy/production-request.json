@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-top-proposal-nav-20261106",
-  "reason": "Restore all six existing KFB official top navigation destinations on isolated /top-proposal/ client-review page; preserve production /ja/ homepage and noindex preview",
-  "approval_reference": "KFB public launch approved 2026-10-22; project operator requested isolated official-domain review TOP and now explicitly asks to restore original navigation on 2026-11-06"
+  "reason": "Review TOP menu restoration verified live; production run 42161154971 SUCCESS, official /ja/ unchanged and /top-proposal/ noindex preserved",
+  "approval_reference": "KFB public launch approved 2026-10-22; project operator requested restoring original navigation on isolated client-review TOP on 2026-11-06"
 }
