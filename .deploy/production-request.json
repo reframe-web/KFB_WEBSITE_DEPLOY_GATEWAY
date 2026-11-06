@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-about-history-20261023-01-completed",
-  "reason": "Production run 39887108001 SUCCESS: bilingual About KFB history published and live verified",
-  "approval_reference": "KFB public launch approved 2026-10-22; KFB fixed-page content addition requested 2026-10-23"
+  "deploy": true,
+  "request_id": "kfb-top-proposal-review-20261106",
+  "reason": "Publish isolated noindex client-review TOP proposal at /top-proposal/; preserve current public homepage",
+  "approval_reference": "KFB site public launch approved 2026-10-22; project operator explicitly requested distinct official-domain client-review URL on 2026-11-06, not replacement of homepage"
 }
