@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-top-proposal-desktop-carousel-20261106",
-  "reason": "Refined desktop carousel release run 42165239374 completed successfully; client-review TOP only, noindex and formal /ja/ preserved",
-  "approval_reference": "User preferred to retain the slider and refine the design on 2026-11-06"
+  "deploy": true,
+  "request_id": "kfb-top-proposal-remove-design-study-20261106",
+  "reason": "Remove client-review-only design study banner, footer note and preview wording from /top-proposal/; preserve noindex and official /ja/ unchanged",
+  "approval_reference": "User requested removal of KFB DESIGN STUDY notice on 2026-11-06"
 }
