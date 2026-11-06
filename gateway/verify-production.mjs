@@ -101,8 +101,9 @@ for (const file of htmlFiles) {
   const isClientTopProposal = rel === "top-proposal/index.html";
   if (isClientTopProposal) {
     if (!/<meta\s+name=["']robots["']\s+content=["']noindex,nofollow,noarchive["']/iu.test(body) ||
-        !body.includes("KFB DESIGN STUDY")) {
-      throw new Error("Client TOP proposal must remain clearly marked and noindex.");
+        !/<meta\s+name=["']kfb-preview-scope["']\s+content=["']client-top-proposal["']/iu.test(body) ||
+        !/<link\s+rel=["']canonical["']\s+href=["']https:\/\/kfbokinawa\.org\/top-proposal\/["']/iu.test(body)) {
+      throw new Error("Client TOP proposal must remain scope-marked, canonically isolated and noindex.");
     }
   } else if (!/<meta\s+name=["']robots["']\s+content=["']index,follow["']/iu.test(body)) {
     throw new Error(`Public robots meta missing in ${rel}`);
