@@ -56,9 +56,12 @@ function transformHtml(html, rel) {
     throw new Error(`Unremoved review-only link in public page: ${rel}`);
   }
 
-  // Normalize metadata attribute order; the Drive source includes both forms.
-  out = out.replace(/<meta\b[^>]*\bname=["']robots["'][^>]*>/giu,
-    '<meta name="robots" content="index,follow">');
+  // Keep the exact client-review route out of search, without weakening public pages.
+  const isClientTopProposal = rel === "top-proposal/index.html";
+  const robotsMeta = isClientTopProposal
+    ? '<meta name="robots" content="noindex,nofollow,noarchive">'
+    : '<meta name="robots" content="index,follow">';
+  out = out.replace(/<meta\b[^>]*\bname=["']robots["'][^>]*>/giu, robotsMeta);
   out = out.replace(/<link\b[^>]*\brel=["']canonical["'][^>]*>/giu, (tag) => {
     const href = tag.match(/\bhref=["']([^"']+)["']/iu)?.[1];
     if (!href) throw new Error("Canonical link has no href in " + rel);
