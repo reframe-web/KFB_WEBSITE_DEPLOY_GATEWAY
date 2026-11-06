@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-top-proposal-art-direction-20261106-v1",
-  "reason": "Refine KFB client TOP proposal with coherent editorial heading strokes and three purposeful support illustrations; official TOP stays unchanged",
-  "approval_reference": "2026-11-06 user requested replacing casual asterisks, heart and support-card artwork"
+  "reason": "KFB TOP review art-direction refinement verified via successful workflow run 42180912377; request disarmed",
+  "approval_reference": "Review-only /top-proposal/ scope; official TOP remains unchanged"
 }
