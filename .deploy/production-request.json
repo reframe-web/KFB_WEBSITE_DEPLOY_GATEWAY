@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-top-proposal-icon-polish-20261106-v1",
-  "reason": "KFB TOP proposal icon polish release passed production verification; workflow run 42171650253",
-  "approval_reference": "User requested detailed icon/layout polish; official TOP remained unchanged"
+  "deploy": true,
+  "request_id": "kfb-top-proposal-art-direction-20261106-v1",
+  "reason": "Refine KFB client TOP proposal with coherent editorial heading strokes and three purposeful support illustrations; official TOP stays unchanged",
+  "approval_reference": "2026-11-06 user requested replacing casual asterisks, heart and support-card artwork"
 }
