@@ -98,10 +98,17 @@ await walk(root);
 for (const file of htmlFiles) {
   const rel = relative(root, file).split(sep).join("/");
   const body = await readFile(file, "utf8");
-  if (!/<meta\s+name=["']robots["']\s+content=["']index,follow["']/iu.test(body)) {
+  const isClientTopProposal = rel === "top-proposal/index.html";
+  if (isClientTopProposal) {
+    if (!/<meta\s+name=["']robots["']\s+content=["']noindex,nofollow,noarchive["']/iu.test(body) ||
+        !body.includes("KFB DESIGN STUDY")) {
+      throw new Error("Client TOP proposal must remain clearly marked and noindex.");
+    }
+  } else if (!/<meta\s+name=["']robots["']\s+content=["']index,follow["']/iu.test(body)) {
     throw new Error(`Public robots meta missing in ${rel}`);
   }
   for (const re of forbidden) {
+    if (isClientTopProposal && re === forbidden[0]) continue;
     if (re.test(body)) throw new Error(`Preview/internal copy remains in ${rel}`);
   }
   const canonical = body.match(/<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']/iu)?.[1];
@@ -145,7 +152,7 @@ for (const url of [
 ]) {
   if (!sitemap.includes(url)) throw new Error(`Sitemap missing: ${url}`);
 }
-if (/\/review\/|legacy-preview/iu.test(sitemap)) {
+if (/\/review\/|legacy-preview|\/top-proposal\//iu.test(sitemap)) {
   throw new Error("Preview URL leaked into sitemap.");
 }
 for (const match of sitemap.matchAll(/https:\/\/kfbokinawa\.org\/(?:ja|en)\/activities\/archive\/(legacy-[A-Za-z0-9._-]+)\//gu)) {
