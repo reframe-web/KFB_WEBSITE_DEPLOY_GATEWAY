@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-top-proposal-remove-design-study-20261106-retry1",
-  "reason": "Remove top design-study strip and footer preview copy; validator now checks exact noindex, client-top-proposal scope meta, and preview canonical URL",
+  "reason": "Review page is live; disarm failed retry before aligning live verification criteria",
   "approval_reference": "User requested removal of KFB DESIGN STUDY notice on 2026-11-06; corrective validation metadata-only, noindex preserved"
 }
