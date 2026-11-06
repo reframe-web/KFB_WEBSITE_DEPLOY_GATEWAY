@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-top-proposal-remove-design-study-20261106",
-  "reason": "Remove client-review-only design study banner, footer note and preview wording from /top-proposal/; preserve noindex and official /ja/ unchanged",
-  "approval_reference": "User requested removal of KFB DESIGN STUDY notice on 2026-11-06"
+  "reason": "Paused after verification rejected required visible KFB DESIGN STUDY marker; revise check to explicit metadata and unchanged noindex before retry",
+  "approval_reference": "User requested removal of KFB DESIGN STUDY banner on 2026-11-06"
 }
