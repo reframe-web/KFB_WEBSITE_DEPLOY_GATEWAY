@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-video-structured-data-20261108-v1",
-  "reason": "Fix VideoObject structured data on JA/EN video article pages (video-rkbNbDKpgZA): add thumbnailUrl and uploadDate 2025-03-06 verified on the official YouTube page, per Search Console notice WNC-10030322 (2026-11-08). Drive canonical JA/EN HTML and editorial record updated and read back before arming.",
-  "approval_reference": "User approval in Muse KFB publishing thread, 2026-11-08: proceed with this diff through canonical update and production release"
+  "reason": "KFB video structured data fix verified via successful workflow run 42459937497; live JA/EN pages confirmed with thumbnailUrl and uploadDate; request disarmed",
+  "approval_reference": "Fix complete 2026-11-08; official site otherwise unchanged"
 }
