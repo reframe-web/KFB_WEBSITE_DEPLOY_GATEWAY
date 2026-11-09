@@ -17,6 +17,10 @@ export default {
       return Response.redirect(target.toString(), 301);
     }
 
+    if (url.pathname === "/") {
+      return Response.redirect("https://kfbokinawa.org/ja/", 301);
+    }
+
     if (url.pathname === "/robots.txt") {
       const headers = securityHeaders(new Headers({
         "Content-Type": "text/plain; charset=utf-8",
