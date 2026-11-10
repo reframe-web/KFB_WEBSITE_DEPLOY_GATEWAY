@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-video-structured-data-20261108-v1",
-  "reason": "KFB video structured data fix verified via successful workflow run 42459937497; live JA/EN pages confirmed with thumbnailUrl and uploadDate; request disarmed",
-  "approval_reference": "Fix complete 2026-11-08; official site otherwise unchanged"
+  "deploy": true,
+  "request_id": "kfb-root-canonical-consolidation-20261110-v1",
+  "reason": "Fix Search Console duplicate/canonical issue WNC-20237597: root / now returns a real 301 to /ja/ (production worker), root canonical points to /ja/ so it leaves the generated sitemap, and JA/EN top pages declare x-default as /ja/. Drive canonical (root index, ja/index, en/index) updated and read back; worker change committed (6618891); live-verification workflow updated by the owner (9ae7e7b) to assert the root 301.",
+  "approval_reference": "User approval in Muse KFB publishing thread, 2026-11-10: proceed to production with the complete fix (not cosmetic only)"
 }
