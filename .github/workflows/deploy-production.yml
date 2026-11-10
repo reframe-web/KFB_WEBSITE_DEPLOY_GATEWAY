@@ -178,7 +178,11 @@ jobs:
           grep -Fq "Sitemap: https://kfbokinawa.org/sitemap.xml" "$RUNNER_TEMP/robots"
           ! grep -Fiq "x-robots-tag: noindex" "$RUNNER_TEMP/robots.h"
 
-          for path in / /ja/ /en/ /ja/about/ /en/about/ /ja/what-we-do/ /en/what-we-do/ /ja/activities/ /en/activities/ /ja/support/ /en/support/ /ja/contact/ /en/contact/ /sitemap.xml; do
+          root_code="$(curl -sS -o /dev/null -D "$RUNNER_TEMP/root.h" -w '%{http_code}' "$origin/")"
+          test "$root_code" = "301"
+          grep -Fiq "location: https://kfbokinawa.org/ja/" "$RUNNER_TEMP/root.h"
+
+          for path in /ja/ /en/ /ja/about/ /en/about/ /ja/what-we-do/ /en/what-we-do/ /ja/activities/ /en/activities/ /ja/support/ /en/support/ /ja/contact/ /en/contact/ /sitemap.xml; do
             code="$(curl -sS -o "$RUNNER_TEMP/page" -D "$RUNNER_TEMP/page.h" -w '%{http_code}' "$origin$path")"
             test "$code" = "200"
             ! grep -Fiq "www-authenticate:" "$RUNNER_TEMP/page.h"
