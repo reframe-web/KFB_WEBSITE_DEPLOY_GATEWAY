@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-top-design-rollout-20261122-v1",
-  "reason": "Top design rollout verified via successful workflow run 37; live checks confirmed new JA/EN tops serving top-2026.css with index,follow, section pages serving site-v5.css, root 301 to /ja/, sitemap unchanged at 432 URLs, /top-proposal/ still noindex, Stripe 8 live links per language intact; request disarmed",
-  "approval_reference": "Release complete 2026-11-22; design approved as-is by the user in the KFB publishing thread"
+  "deploy": true,
+  "request_id": "kfb-top-corner-softening-20261122-v1",
+  "reason": "Client-requested corner softening of the new top page frames: append-only radius overrides in assets/css/top-2026.css (recent cards, meaning panel, support options 20px; film frame 18px; video picks 16px; pick covers 10px; media dialog 18px; small chips pill). No other files changed; local rendering QA passed and client approved the preview as-is",
+  "approval_reference": "User instruction 2026-11-22 in the KFB publishing thread: release the corner-softening preview as-is"
 }
