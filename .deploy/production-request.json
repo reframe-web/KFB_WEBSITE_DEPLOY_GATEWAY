@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-top-corner-softening-20261122-v1",
-  "reason": "Corner softening verified via successful workflow run 39; live check confirmed top-2026.css serving the radius overrides, JA/EN tops 200, sitemap unchanged at 432 URLs; request disarmed",
-  "approval_reference": "Release complete 2026-11-22; client approved the preview as-is in the KFB publishing thread"
+  "deploy": true,
+  "request_id": "kfb-heading-scale-20261122-v1",
+  "reason": "Client feedback after the top rollout: section page hero titles render at 44.8-56px on phones (site-v2 sets a 2.8rem floor for five hero titles and 12vw for the about hero) and wrap Japanese titles into 3-4 character lines; the 14ch max-width cap also wraps titles at about 7 full-width characters. Append-only overrides in assets/css/site-v5.css under a max-width:680px media query bring phone titles to about 33px and release the width cap; balanced wrapping kept per client choice; desktop unchanged",
+  "approval_reference": "User instruction 2026-11-22 in the KFB publishing thread: release the balanced-wrap preview as-is"
 }
