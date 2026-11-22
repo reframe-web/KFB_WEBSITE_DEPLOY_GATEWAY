@@ -1,7 +1,1 @@
-{
-  "schema": 1,
-  "deploy": false,
-  "request_id": "kfb-root-canonical-consolidation-20261110-v1",
-  "reason": "Root canonical consolidation verified via successful workflow run 42729413289; live checks confirmed root 301 to /ja/, x-default aligned to /ja/ on JA/EN tops, and root removed from sitemap (433 to 432 URLs); request disarmed",
-  "approval_reference": "Fix complete 2026-11-10; Search Console re-crawl pending on Google side"
-}
+ewogICJzY2hlbWEiOiAxLAogICJkZXBsb3kiOiB0cnVlLAogICJyZXF1ZXN0X2lkIjogImtmYi10b3AtZGVzaWduLXJvbGxvdXQtMjAyNjExMjItdjEiLAogICJyZWFzb24iOiAiQWRvcHQgdGhlIGNsaWVudC1hcHByb3ZlZCB0b3AgZGVzaWduIHNpdGUtd2lkZTogbmV3IEpBL0VOIHRvcCBwYWdlcyBidWlsdCBmcm9tIHRoZSBhcHByb3ZlZCBwcm9wb3NhbCwgc2hhcmVkIGRlc2lnbiBsYXllciBzaXRlLXY1LmNzcyBhcHBsaWVkIHRvIHNlY3Rpb24gcGFnZXMgKEpBL0VOKSwgbmV3IHRvcCBhc3NldHMgYW5kIGhvbWVwYWdlIHZpZGVvIGRhdGEgYWRkZWQgdG8gRHJpdmUgY2Fub25pY2FsIFNPVVJDRTsgbG9jYWwgdmlzdWFsIFFBIHBhc3NlZCBvbiBhbGwgcGFnZXMiLAogICJhcHByb3ZhbF9yZWZlcmVuY2UiOiAiVXNlciBpbnN0cnVjdGlvbiAyMDI2LTExLTIyIGluIHRoZSBLRkIgcHVibGlzaGluZyB0aHJlYWQ6IGRlc2lnbiBhcHByb3ZlZCBhcy1pcywgcHJvY2VlZCB0aHJvdWdoIGFsbCByb2xsb3V0IHN0ZXBzIHRvIHByb2R1Y3Rpb24gcmVsZWFzZSIKfQo=
