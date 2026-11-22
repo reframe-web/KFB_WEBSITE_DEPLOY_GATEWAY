@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "deploy": true,
+  "deploy": false,
   "request_id": "kfb-top-design-rollout-20261122-v1",
-  "reason": "Adopt the client-approved top design site-wide: new JA/EN top pages built from the approved proposal, shared design layer site-v5.css applied to section pages (JA/EN), new top assets and homepage video data added to Drive canonical SOURCE; local visual QA passed on all pages",
-  "approval_reference": "User instruction 2026-11-22 in the KFB publishing thread: design approved as-is, proceed through all rollout steps to production release"
+  "reason": "Top design rollout verified via successful workflow run 37; live checks confirmed new JA/EN tops serving top-2026.css with index,follow, section pages serving site-v5.css, root 301 to /ja/, sitemap unchanged at 432 URLs, /top-proposal/ still noindex, Stripe 8 live links per language intact; request disarmed",
+  "approval_reference": "Release complete 2026-11-22; design approved as-is by the user in the KFB publishing thread"
 }
